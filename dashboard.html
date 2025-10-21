@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<!-- L'attribut lang sera mis à jour dynamiquement par JavaScript -->
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Le titre sera mis à jour dynamiquement -->
+    <title>Dashboard - ICARTABLE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <style>
+        :root {
+            --primary-purple: #6c47ff;
+            --dark-purple: #2c213f;
+            --light-purple: #a58bff;
+            --text-color: #e0e0e0;
+            --background-color: #1e1b2f;
+            --sidebar-bg: #2c213f;
+            --header-bg: #2c213f;
+            --card-bg: #3c3053;
+            --border-color: #5a4b7d;
+            --input-bg: #3c3053;
+            --accent-color: #007bff;
+            --danger-color: #dc3545;
+            --placeholder-color: #9c9c9c;
+        }
+
+        body.light-mode {
+            --text-color: #333;
+            --background-color: #f0f2f5;
+            --sidebar-bg: #ffffff;
+            --header-bg: #ffffff;
+            --card-bg: #ffffff;
+            --border-color: #d1d1d1;
+            --input-bg: #f9f9f9;
+            --primary-purple: #6c47ff;
+            --dark-purple: #2c213f;
+            --light-purple: #a58bff;
+            --placeholder-color: #888;
+        }
+
+        body.light-mode .sidebar .logo-text, body.light-mode .header .page-title, body.light-mode .header-actions .icon-btn, body.light-mode .language-dropdown button, body.light-mode .document-card .doc-title, body.light-mode .documents-header h2, body.light-mode .language-dropdown .dropdown-content a, body.light-mode .profile-dropdown .dropdown-content a, body.light-mode .doc-actions .action-menu-content a, body.light-mode .context-menu-top .search-bar i, body.light-mode .documents-header .sort-options label, body.light-mode .view-options button, body.light-mode .document-table th {
+            color: var(--text-color);
+        }
+        body.light-mode .sidebar .nav-link i, body.light-mode .document-card .doc-meta i {
+            color: var(--primary-purple);
+        }
+        body.light-mode .sidebar .nav-link.active i {
+            color: white;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { display: flex; min-height: 100vh; background-color: var(--background-color); color: var(--text-color); overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
+        .sidebar { width: 250px; min-width: 250px; background-color: var(--sidebar-bg); padding: 20px; display: flex; flex-direction: column; transition: all 0.3s ease; position: sticky; top: 0; left: 0; height: 100vh; z-index: 1000; box-shadow: 2px 0 10px rgba(0,0,0,0.1); }
+        body.light-mode .sidebar { box-shadow: 2px 0 10px rgba(0,0,0,0.05); }
+        .sidebar.collapsed { width: 70px; min-width: 70px; }
+        .sidebar .logo-container { display: flex; align-items: center; margin-bottom: 30px; position: relative; padding-right: 30px; }
+        .sidebar .logo-text { font-size: 20px; font-weight: 600; color: var(--text-color); opacity: 1; transition: opacity 0.3s ease, width 0.3s ease; white-space: nowrap; overflow: hidden; flex-grow: 1; }
+        body.light-mode .sidebar .logo-text { color: var(--dark-purple); }
+        .sidebar.collapsed .logo-text { opacity: 0; width: 0; margin-right: 0; }
+        .sidebar .toggle-btn { background: none; border: none; color: var(--text-color); font-size: 20px; cursor: pointer; position: absolute; right: 0; top: 50%; transform: translateY(-50%); padding: 5px; display: none; transition: color 0.3s ease; }
+        .sidebar .toggle-btn:hover { color: var(--primary-purple); }
+        @media (min-width: 768px) { .sidebar .toggle-btn { display: block; } }
+        .sidebar .nav-list { list-style: none; flex-grow: 1; }
+        .sidebar .nav-item { margin-bottom: 10px; }
+        .sidebar .nav-link { display: flex; align-items: center; color: var(--text-color); text-decoration: none; padding: 12px 15px; border-radius: 8px; transition: background-color 0.3s ease, color 0.3s ease; white-space: nowrap; }
+        body.light-mode .sidebar .nav-link { color: var(--text-color); }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: var(--primary-purple); color: white; }
+        .sidebar .nav-link.active span { color: white; }
+        .sidebar .nav-link i { font-size: 18px; width: 30px; text-align: center; margin-right: 15px; flex-shrink: 0; }
+        .sidebar .nav-link span { opacity: 1; transition: opacity 0.3s ease, width 0.3s ease; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; }
+        .sidebar.collapsed .nav-link span { opacity: 0; width: 0; margin-right: 0; }
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: var(--background-color); transition: background-color 0.3s ease; }
+        .header { background-color: var(--header-bg); padding: 20px 30px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); z-index: 999; transition: background-color 0.3s ease, box-shadow 0.3s ease; }
+        body.light-mode .header { box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08); }
+        .header .page-title { font-size: 24px; font-weight: 600; color: var(--text-color); display: flex; align-items: center; }
+        body.light-mode .header .page-title { color: var(--dark-purple); }
+        .header .header-actions { display: flex; align-items: center; gap: 20px; }
+        .header-actions .icon-btn { background: none; border: none; color: var(--text-color); font-size: 20px; cursor: pointer; position: relative; padding: 5px; border-radius: 5px; transition: color 0.3s ease, background-color 0.3s ease; }
+        .header-actions .icon-btn:hover { color: var(--primary-purple); background-color: rgba(108, 71, 255, 0.1); }
+        body.light-mode .header-actions .icon-btn { color: var(--dark-purple); }
+        body.light-mode .header-actions .icon-btn:hover { color: var(--primary-purple); background-color: rgba(108, 71, 255, 0.1); }
+        .header-actions .notification-badge { position: absolute; top: 0; right: 0; background-color: var(--danger-color); color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; line-height: 1; }
+        .language-dropdown { position: relative; display: inline-block; }
+        .language-dropdown button { background: none; border: none; color: var(--text-color); font-size: 14px; cursor: pointer; padding: 5px 10px; border-radius: 5px; transition: background-color 0.3s ease, color 0.3s ease; display: flex; align-items: center; gap: 5px; }
+        .language-dropdown button:hover { background-color: rgba(255, 255, 255, 0.1); }
+        body.light-mode .language-dropdown button { color: var(--dark-purple); }
+        body.light-mode .language-dropdown button:hover { background-color: rgba(0,0,0,0.05); }
+        .language-dropdown .dropdown-content { display: none; position: absolute; background-color: var(--input-bg); min-width: 120px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; right: 0; border-radius: 8px; overflow: hidden; top: 100%; margin-top: 10px; transition: background-color 0.3s ease; }
+        body.light-mode .language-dropdown .dropdown-content { box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1); }
+        .language-dropdown .dropdown-content a { color: var(--text-color); padding: 12px 16px; text-decoration: none; display: block; font-size: 14px; transition: background-color 0.3s ease, color 0.3s ease; }
+        body.light-mode .language-dropdown .dropdown-content a { color: var(--dark-purple); }
+        .language-dropdown .dropdown-content a:hover { background-color: var(--border-color); }
+        .language-dropdown.open .dropdown-content { display: block; }
+        .profile-dropdown { position: relative; display: inline-block; margin-left: 10px; }
+        .profile-dropdown .profile-pic { width: 40px; height: 40px; border-radius: 50%; background-color: var(--primary-purple); object-fit: cover; cursor: pointer; border: 2px solid transparent; transition: border-color 0.3s ease; }
+        .profile-dropdown .profile-pic:hover { border-color: var(--primary-purple); }
+        .profile-dropdown .dropdown-content { display: none; position: absolute; background-color: var(--input-bg); min-width: 180px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; right: 0; border-radius: 8px; overflow: hidden; top: 100%; margin-top: 10px; transition: background-color 0.3s ease; }
+        body.light-mode .profile-dropdown .dropdown-content { box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1); }
+        .profile-dropdown .dropdown-content a { color: var(--text-color); padding: 12px 16px; text-decoration: none; display: block; font-size: 14px; transition: background-color 0.3s ease, color 0.3s ease; }
+        body.light-mode .profile-dropdown .dropdown-content a { color: var(--dark-purple); }
+        .profile-dropdown .dropdown-content a:hover { background-color: var(--border-color); }
+        .profile-dropdown.open .dropdown-content { display: block; }
+        .context-menu-top { background-color: var(--card-bg); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); transition: background-color 0.3s ease, border-color 0.3s ease; }
+        .context-menu-top .left-actions, .context-menu-top .right-actions { display: flex; gap: 15px; align-items: center; }
+        .context-menu-top .action-button { padding: 10px 18px; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; display: flex; align-items: center; gap: 8px; }
+        .context-menu-top .action-button i { font-size: 16px; }
+        .context-menu-top .action-button.primary { background-color: var(--primary-purple); color: white; }
+        .context-menu-top .action-button.primary:hover { background-color: #5a3ed0; }
+        .context-menu-top .action-button.secondary { background-color: var(--input-bg); color: var(--text-color); border: 1px solid var(--border-color); }
+        .context-menu-top .action-button.secondary:hover { background-color: var(--border-color); }
+        /* NOUVEAU : Style pour le bouton de suppression */
+        .context-menu-top .action-button.danger { background-color: var(--danger-color); color: white; border: 1px solid var(--danger-color); }
+        .context-menu-top .action-button.danger:hover { background-color: #c82333; }
+
+        body.light-mode .context-menu-top .action-button.secondary { color: var(--dark-purple); }
+        .context-menu-top .search-bar { position: relative; }
+        .context-menu-top .search-bar input { padding: 8px 12px 8px 35px; border-radius: 8px; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-color); font-size: 14px; outline: none; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+        .context-menu-top .search-bar input::placeholder { color: var(--placeholder-color); }
+        body.light-mode .context-menu-top .search-bar input { color: var(--dark-purple); }
+        .context-menu-top .search-bar i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--placeholder-color); transition: color 0.3s ease; }
+        .dashboard-content { padding: 30px; flex-grow: 1; transition: background-color 0.3s ease; }
+        .documents-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px; }
+        .documents-header h2 { font-size: 22px; font-weight: 600; color: var(--text-color); transition: color 0.3s ease; }
+        body.light-mode .documents-header h2 { color: var(--dark-purple); }
+        .documents-header .header-right-options { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+        .documents-header .sort-options { display: flex; gap: 15px; align-items: center; }
+        .documents-header .sort-options label { font-size: 14px; color: var(--text-color); transition: color 0.3s ease; }
+        body.light-mode .documents-header .sort-options label { color: var(--dark-purple); }
+        .documents-header .sort-options select { padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-color); font-size: 14px; outline: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e0e0e0'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; background-size: 18px; cursor: pointer; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+        body.light-mode .documents-header .sort-options select { color: var(--dark-purple); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23333333'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+        .view-options { display: flex; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+        .view-options button { background: none; border: none; color: var(--text-color); font-size: 16px; padding: 6px 12px; cursor: pointer; transition: background-color 0.3s, color 0.3s; }
+        .view-options button.active { background-color: var(--primary-purple); color: white; }
+        .view-options button:not(.active):hover { background-color: var(--border-color); }
+        .document-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .document-card { background-color: var(--card-bg); border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); position: relative; display: flex; flex-direction: column; justify-content: space-between; min-height: 220px; transition: background-color 0.3s ease, box-shadow 0.3s ease; }
+        body.light-mode .document-card { box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); }
+        .document-card .doc-title { font-size: 18px; font-weight: 600; color: var(--text-color); margin-bottom: 10px; line-height: 1.3; transition: color 0.3s ease; }
+        body.light-mode .document-card .doc-title { color: var(--dark-purple); }
+        .document-card .doc-meta { font-size: 13px; color: var(--placeholder-color); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; transition: color 0.3s ease; }
+        .document-card .doc-meta i { color: var(--light-purple); font-size: 14px; width: 16px; text-align: center;}
+        .document-card .doc-description { font-size: 14px; color: var(--text-color); margin: 15px 0; flex-grow: 1; transition: color 0.3s ease; line-height: 1.5; }
+        body.light-mode .document-card .doc-description { color: var(--text-color); }
+        .doc-actions .action-menu-btn { background: none; border: none; color: var(--placeholder-color); font-size: 18px; cursor: pointer; padding: 5px; border-radius: 5px; transition: color 0.3s ease, background-color 0.3s ease; }
+        .document-card .doc-actions { position: absolute; top: 15px; right: 15px; z-index: 10; }
+        .doc-actions .action-menu-btn:hover { color: var(--text-color); background-color: rgba(255, 255, 255, 0.1); }
+        body.light-mode .doc-actions .action-menu-btn { color: var(--placeholder-color); }
+        body.light-mode .doc-actions .action-menu-btn:hover { color: var(--dark-purple); background-color: rgba(0, 0, 0, 0.05); }
+        .doc-actions .action-menu-content { display: none; position: absolute; background-color: var(--input-bg); min-width: 200px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; right: 0; border-radius: 8px; overflow: hidden; top: 100%; margin-top: 5px; transition: background-color 0.3s ease; }
+        body.light-mode .doc-actions .action-menu-content { box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1); }
+        .doc-actions .action-menu-content a { color: var(--text-color); padding: 10px 15px; text-decoration: none; display: block; font-size: 13px; transition: background-color 0.3s ease, color 0.3s ease; display: flex; align-items: center; gap: 10px; }
+        body.light-mode .doc-actions .action-menu-content a { color: var(--dark-purple); }
+        .doc-actions .action-menu-content a:hover { background-color: var(--border-color); }
+        .doc-actions .action-menu-content a.delete { color: var(--danger-color); }
+        .doc-actions.open .action-menu-content { display: block; }
+        .document-table { width: 100%; border-collapse: collapse; background-color: var(--card-bg); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); }
+        body.light-mode .document-table { box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); }
+        .document-table th, .document-table td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        /* NOUVEAU : Style pour la colonne des cases à cocher */
+        .document-table th.checkbox-col, .document-table td.checkbox-col { width: 40px; text-align: center; }
+        .document-table input[type="checkbox"] { cursor: pointer; width: 18px; height: 18px; }
+
+        .document-table th { font-weight: 600; font-size: 14px; text-transform: uppercase; color: var(--text-color); }
+        .document-table td { font-size: 14px; vertical-align: middle; }
+        .document-table tbody tr:hover { background-color: var(--sidebar-bg); }
+        .document-table .doc-actions { position: relative; }
+        .document-table .doc-description-cell { max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .new-document-modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); justify-content: center; align-items: center; padding: 20px; }
+        .new-document-modal.open { display: flex; }
+        .new-document-modal-content { background-color: var(--background-color); margin: auto; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); width: 90%; max-width: 700px; position: relative; animation: fadeIn 0.3s ease-out; max-height: 90vh; overflow-y: auto; transition: background-color 0.3s ease; }
+        body.light-mode .new-document-modal-content { box-shadow: 0 5px 15px rgba(0,0,0,0.15); background-color: var(--card-bg); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        .new-document-modal-content .close-btn { color: var(--text-color); position: absolute; top: 15px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; transition: color 0.3s ease; }
+        .new-document-modal-content .close-btn:hover, .new-document-modal-content .close-btn:focus { color: var(--primary-purple); text-decoration: none; cursor: pointer; }
+        body.light-mode .new-document-modal-content .close-btn { color: #555; }
+        body.light-mode .new-document-modal-content .close-btn:hover { color: var(--primary-purple); }
+        .new-document-modal-content h2 { color: var(--text-color); margin-bottom: 25px; font-size: 24px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; transition: color 0.3s ease; }
+        body.light-mode .new-document-modal-content h2 { color: var(--dark-purple); }
+        .new-document-form .form-group { margin-bottom: 20px; }
+        .new-document-form label { display: block; margin-bottom: 8px; font-weight: 500; color: var(--text-color); transition: color 0.3s ease; }
+        body.light-mode .new-document-form label { color: var(--dark-purple); }
+        .new-document-form input[type="text"], .new-document-form input[type="date"], .new-document-form select, .new-document-form textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-color); font-size: 15px; outline: none; transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease; }
+        .new-document-form input[type="text"]::placeholder, .new-document-form textarea::placeholder { color: var(--placeholder-color); }
+        body.light-mode .new-document-form input, body.light-mode .new-document-form select, body.light-mode .new-document-form textarea { color: var(--dark-purple); }
+        .new-document-form input:focus, .new-document-form select:focus, .new-document-form textarea:focus { border-color: var(--primary-purple); box-shadow: 0 0 0 3px rgba(108, 71, 255, 0.2); }
+        .new-document-form textarea { resize: vertical; min-height: 100px; }
+        .new-document-form .form-actions { display: flex; justify-content: flex-end; gap: 15px; margin-top: 30px; }
+        .new-document-form .form-actions button { padding: 12px 25px; border-radius: 8px; font-size: 16px; font-weight: 500; cursor: pointer; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; border: none; }
+        .new-document-form .form-actions .btn-cancel { background-color: var(--input-bg); color: var(--text-color); border: 1px solid var(--border-color); }
+        .new-document-form .form-actions .btn-cancel:hover { background-color: var(--border-color); }
+        body.light-mode .new-document-form .form-actions .btn-cancel { color: var(--dark-purple); }
+        .new-document-form .form-actions .btn-submit { background-color: var(--primary-purple); color: white; }
+        .new-document-form .form-actions .btn-submit:hover { background-color: #5a3ed0; }
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999; display: none; }
+        body.sidebar-open .sidebar-overlay { display: block; }
+        @media (max-width: 768px) {
+            .sidebar { position: fixed; left: -250px; height: 100vh; top: 0; width: 250px; min-width: unset; box-shadow: 2px 0 10px rgba(0,0,0,0.5); }
+            body.sidebar-open .sidebar { left: 0; }
+            .sidebar.collapsed { width: 250px; min-width: unset; }
+            .sidebar .toggle-btn { display: none; }
+            .header { padding: 15px 20px; }
+            .header .page-title { font-size: 20px; }
+            #mobileSidebarToggle { display: block !important; }
+            .header .header-actions { gap: 10px; }
+            .context-menu-top { flex-direction: column; align-items: flex-start; gap: 15px; padding: 15px 20px; }
+            .context-menu-top .left-actions, .context-menu-top .right-actions { flex-wrap: wrap; gap: 10px; width: 100%; justify-content: flex-start; }
+            .context-menu-top .search-bar { width: 100%; }
+            .context-menu-top .search-bar input { width: 100%; }
+            .dashboard-content { padding: 20px; }
+            .documents-header { flex-direction: column; align-items: flex-start; }
+            .documents-header .header-right-options { width: 100%; justify-content: space-between; }
+            .new-document-modal-content { padding: 20px; width: 95%; }
+            .new-document-modal-content h2 { font-size: 20px; }
+            .new-document-form .form-actions { flex-direction: column-reverse; gap: 10px; }
+            .new-document-form .form-actions button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="logo-container">
+            <span class="logo-text">iCARTABLE</span>
+            <button class="toggle-btn" id="sidebarToggle"><i class="fas fa-chevron-left"></i></button>
+        </div>
+        <ul class="nav-list">
+            <li class="nav-item"><a href="#" class="nav-link active" data-lang-key="sidebar.dashboard"><i class="fas fa-th-large"></i><span>Tableau de bord</span></a></li>
+            <li class="nav-item"><a href="#" class="nav-link" data-lang-key="sidebar.myDocuments"><i class="fas fa-file-alt"></i><span>Mes Documents</span></a></li>
+            <li class="nav-item"><a href="#" class="nav-link" data-lang-key="sidebar.users"><i class="fas fa-users"></i><span>Utilisateurs</span></a></li>
+            <li class="nav-item"><a href="#" class="nav-link" data-lang-key="sidebar.settings"><i class="fas fa-cog"></i><span>Paramètres</span></a></li>
+        </ul>
+        <div class="nav-list">
+            <li class="nav-item"><a href="#" class="nav-link" data-lang-key="sidebar.help"><i class="fas fa-question-circle"></i><span>Aide</span></a></li>
+            <li class="nav-item"><a href="#" class="nav-link" id="sidebarLogout" data-lang-key="sidebar.logout"><i class="fas fa-sign-out-alt"></i><span>Déconnexion</span></a></li>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Contenu Principal -->
+    <div class="main-content">
+        <header class="header">
+            <div class="page-title">
+                <button class="icon-btn" id="mobileSidebarToggle" style="margin-right: 15px; display: none;"><i class="fas fa-bars"></i></button>
+                <span data-lang-key="header.title">TABLEAU DE BORD</span>
+            </div>
+            <div class="header-actions">
+                <button class="icon-btn" id="themeToggle"><i class="fas fa-moon"></i></button>
+                <button class="icon-btn"><i class="fas fa-bell"></i><span class="notification-badge">3</span></button>
+                <div class="language-dropdown" id="languageDropdown">
+                    <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-globe"></i> <span id="selectedLanguage">Français</span> <i class="fas fa-caret-down"></i>
+                    </button>
+                    <div class="dropdown-content" aria-labelledby="selectedLanguage">
+                        <a href="#" data-lang="fr">Français</a>
+                        <a href="#" data-lang="en">English</a>
+                        <a href="#" data-lang="de">Deutsch</a>
+                        <a href="#" data-lang="es">Español</a>
+                    </div>
+                </div>
+                <div class="profile-dropdown" id="profileDropdown">
+                    <img src="https://via.placeholder.com/40/6c47ff/ffffff?text=JD" alt="Profile" class="profile-pic" id="profilePic">
+                    <div class="dropdown-content">
+                        <a href="#" id="viewProfile" data-lang-key="profile.view"><i class="fas fa-user-circle"></i> Voir Profil</a>
+                        <a href="#" id="editProfile" data-lang-key="profile.edit"><i class="fas fa-user-edit"></i> Modifier Profil</a>
+                        <div style="border-top: 1px solid var(--border-color); margin: 5px 0;"></div>
+                        <a href="#" id="logoutBtn" data-lang-key="profile.logout"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="context-menu-top">
+             <!-- NOUVEAU : Conteneur pour les actions par défaut -->
+            <div class="left-actions" id="defaultActions">
+                <button class="action-button primary" id="createDocumentBtn" data-lang-key="actions.create"><i class="fas fa-plus"></i> Créer un document</button>
+                <button class="action-button secondary" data-lang-key="actions.import"><i class="fas fa-upload"></i> Importer</button>
+                <button class="action-button secondary" data-lang-key="actions.bank"><i class="fas fa-folder-open"></i> Banque de documents</button>
+            </div>
+             <!-- NOUVEAU : Conteneur pour les actions sur la sélection (caché par défaut) -->
+            <div class="left-actions" id="selectionActions" style="display: none;">
+                <button class="action-button danger" id="deleteSelectedBtn" data-lang-key="actions.deleteSelected"><i class="fas fa-trash-alt"></i> Supprimer la sélection</button>
+            </div>
+            <div class="right-actions">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="documentSearch" data-lang-key="actions.searchPlaceholder" placeholder="Rechercher par titre...">
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-content">
+            <div class="documents-header">
+                <h2 data-lang-key="documents.listTitle">Liste des Documents</h2>
+                <div class="header-right-options">
+                    <div class="sort-options">
+                        <label for="sortByDomain" data-lang-key="documents.domain">Domaine:</label>
+                        <select id="sortByDomain">
+                            <option value="all" data-lang-key="domains.all">Tous</option>
+                            <option value="IT & Logiciels" data-lang-key="domains.it">IT & Logiciels</option>
+                            <option value="Finance" data-lang-key="domains.finance">Finance</option>
+                            <option value="Marketing" data-lang-key="domains.marketing">Marketing</option>
+                            <option value="Éducation" data-lang-key="domains.education">Éducation</option>
+                        </select>
+                        <label for="sortByDate" data-lang-key="documents.sortBy">Trier par:</label>
+                        <select id="sortByDate">
+                            <option value="newest" data-lang-key="documents.newest">Plus récent</option>
+                            <option value="oldest" data-lang-key="documents.oldest">Plus ancien</option>
+                        </select>
+                    </div>
+                    <div class="view-options">
+                        <button id="gridViewBtn" class="active" title="Grid View"><i class="fas fa-th-large"></i></button>
+                        <button id="tableViewBtn" title="Table View"><i class="fas fa-list"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="documentContainer">
+                <!-- Les documents (grille ou tableau) seront insérés ici par JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de création/modification de document -->
+    <div id="newDocumentModal" class="new-document-modal">
+        <div class="new-document-modal-content">
+            <span class="close-btn" id="closeDocumentModal">&times;</span>
+            <h2 data-lang-key="modal.createTitle">Créer un Nouveau Document</h2>
+            <form id="newDocumentForm" class="new-document-form">
+                <div class="form-group">
+                    <label for="newDocTitle" data-lang-key="modal.docTitle">Titre du document</label>
+                    <input type="text" id="newDocTitle" data-lang-key="modal.docTitlePlaceholder" placeholder="Ex: Rapport de Projet Q4" required>
+                </div>
+                <div class="form-group">
+                    <label for="newDocDescription" data-lang-key="modal.description">Description</label>
+                    <textarea id="newDocDescription" data-lang-key="modal.descriptionPlaceholder" placeholder="Description courte du document..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="newDocDomain" data-lang-key="modal.domain">Domaine</label>
+                    <select id="newDocDomain" required>
+                        <option value="" data-lang-key="modal.selectDomain">Sélectionner un domaine</option>
+                        <option value="IT & Logiciels">IT & Logiciels</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Éducation">Éducation</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="newDocType" data-lang-key="modal.type">Type de Fichier</label>
+                    <select id="newDocType" required>
+                        <option value="" data-lang-key="modal.selectType">Sélectionner un type</option>
+                        <option value="PDF">PDF</option>
+                        <option value="DOCX">DOCX</option>
+                        <option value="XLSX">XLSX</option>
+                        <option value="PPTX">PPTX</option>
+                        <option value="TXT">TXT</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="newDocLicense" data-lang-key="modal.license">Licence</label>
+                    <select id="newDocLicense" required>
+                        <option value="" data-lang-key="modal.selectLicense">Sélectionner une licence</option>
+                        <option value="Propriétaire">Propriétaire</option>
+                        <option value="Interne">Interne</option>
+                        <option value="Open Source">Open Source</option>
+                        <option value="Creative Commons">Creative Commons</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="newDocDate" data-lang-key="modal.date">Date d'ajout</label>
+                    <input type="date" id="newDocDate" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" id="cancelNewDocument" data-lang-key="modal.cancel">Annuler</button>
+                    <button type="submit" class="btn-submit" data-lang-key="modal.create">Créer le Document</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const translations = {
+                fr: {
+                    "pageTitle": "Dashboard - ICARTABLE", "header.title": "TABLEAU DE BORD", "sidebar.dashboard": "Tableau de bord", "sidebar.myDocuments": "Mes Documents", "sidebar.users": "Utilisateurs", "sidebar.settings": "Paramètres", "sidebar.help": "Aide", "sidebar.logout": "Déconnexion", "profile.view": "Voir Profil", "profile.edit": "Modifier Profil", "profile.logout": "Déconnexion", "actions.create": "Créer un document", "actions.import": "Importer", "actions.bank": "Banque de documents", "actions.deleteSelected": "Supprimer la sélection", "actions.searchPlaceholder": "Rechercher par titre...", "documents.listTitle": "Liste des Documents", "documents.domain": "Domaine:", "documents.type": "Type:", "documents.license": "Licence:", "documents.sortBy": "Trier par:", "documents.newest": "Plus récent", "documents.oldest": "Plus ancien", "domains.all": "Tous", "domains.it": "IT & Logiciels", "domains.finance": "Finance", "domains.marketing": "Marketing", "domains.education": "Éducation", "modal.createTitle": "Créer un Nouveau Document", "modal.editTitle": "Modifier le Document", "modal.docTitle": "Titre du document", "modal.docTitlePlaceholder": "Ex: Rapport de Projet Q4", "modal.description": "Description", "modal.descriptionPlaceholder": "Description courte du document...", "modal.domain": "Domaine", "modal.selectDomain": "Sélectionner un domaine", "modal.type": "Type de Fichier", "modal.selectType": "Sélectionner un type", "modal.license": "Licence", "modal.selectLicense": "Sélectionner une licence", "modal.date": "Date d'ajout", "modal.cancel": "Annuler", "modal.create": "Créer le Document", "modal.update": "Mettre à jour", "docActions.open": "Ouvrir", "docActions.edit": "Modifier", "docActions.exportPdf": "Exporter en PDF", "docActions.exportEpoc": "Exporter en package EPOC", "docActions.delete": "Supprimer", "table.header.title": "Titre", "table.header.description": "Description", "table.header.domain": "Domaine", "table.header.type": "Type", "table.header.license": "Licence", "table.header.date": "Date d'ajout", "table.header.actions": "Actions", "toast.langChanged": "Langue changée en {lang}", "toast.logoutSuccess": "Déconnexion réussie. À bientôt !", "swal.logout.title": "Êtes-vous sûr de vouloir vous déconnecter ?", "swal.logout.confirm": "Oui, déconnexion!", "swal.logout.cancel": "Annuler", "swal.logout.successTitle": "Déconnecté!", "swal.logout.successText": "Vous avez été déconnecté avec succès.", "swal.delete.title": "Supprimer \"{title}\" ?", "swal.delete.text": "Cette action est irréversible!", "swal.delete.confirm": "Oui, supprimer!", "swal.delete.successTitle": "Supprimé!", "swal.delete.successText": "Le document \"{title}\" a été supprimé.", "swal.deleteSelected.title": "Supprimer {count} documents ?", "swal.deleteSelected.confirm": "Oui, supprimez-les !", "swal.deleteSelected.successTitle": "Supprimés !", "swal.deleteSelected.successText": "{count} documents ont été supprimés.",
+                },
+                en: {
+                    "pageTitle": "Dashboard - ICARTABLE", "header.title": "DASHBOARD", "sidebar.dashboard": "Dashboard", "sidebar.myDocuments": "My Documents", "sidebar.users": "Users", "sidebar.settings": "Settings", "sidebar.help": "Help", "sidebar.logout": "Logout", "profile.view": "View Profile", "profile.edit": "Edit Profile", "profile.logout": "Logout", "actions.create": "Create Document", "actions.import": "Import", "actions.bank": "Document Bank", "actions.deleteSelected": "Delete Selection", "actions.searchPlaceholder": "Search by title...", "documents.listTitle": "Document List", "documents.domain": "Domain:", "documents.type": "Type:", "documents.license": "License:", "documents.sortBy": "Sort by:", "documents.newest": "Newest", "documents.oldest": "Oldest", "domains.all": "All", "domains.it": "IT & Software", "domains.finance": "Finance", "domains.marketing": "Marketing", "domains.education": "Education", "modal.createTitle": "Create New Document", "modal.editTitle": "Edit Document", "modal.docTitle": "Document Title", "modal.docTitlePlaceholder": "E.g.: Q4 Project Report", "modal.description": "Description", "modal.descriptionPlaceholder": "Short description of the document...", "modal.domain": "Domain", "modal.selectDomain": "Select a domain", "modal.type": "File Type", "modal.selectType": "Select a type", "modal.license": "License", "modal.selectLicense": "Select a license", "modal.date": "Date Added", "modal.cancel": "Cancel", "modal.create": "Create Document", "modal.update": "Update", "docActions.open": "Open", "docActions.edit": "Edit", "docActions.exportPdf": "Export as PDF", "docActions.exportEpoc": "Export as EPOC package", "docActions.delete": "Delete", "table.header.title": "Title", "table.header.description": "Description", "table.header.domain": "Domain", "table.header.type": "Type", "table.header.license": "License", "table.header.date": "Date Added", "table.header.actions": "Actions", "toast.langChanged": "Language changed to {lang}", "toast.logoutSuccess": "Logged out successfully. See you soon!", "swal.logout.title": "Are you sure you want to log out?", "swal.logout.confirm": "Yes, log out!", "swal.logout.cancel": "Cancel", "swal.logout.successTitle": "Logged out!", "swal.logout.successText": "You have been successfully logged out.", "swal.delete.title": "Delete \"{title}\"?", "swal.delete.text": "This action is irreversible!", "swal.delete.confirm": "Yes, delete it!", "swal.delete.successTitle": "Deleted!", "swal.delete.successText": "The document \"{title}\" has been deleted.", "swal.deleteSelected.title": "Delete {count} documents?", "swal.deleteSelected.confirm": "Yes, delete them!", "swal.deleteSelected.successTitle": "Deleted!", "swal.deleteSelected.successText": "{count} documents have been deleted.",
+                },
+                de: {
+                    "pageTitle": "Dashboard - ICARTABLE", "header.title": "DASHBOARD", "sidebar.dashboard": "Dashboard", "sidebar.myDocuments": "Meine Dokumente", "sidebar.users": "Benutzer", "sidebar.settings": "Einstellungen", "sidebar.help": "Hilfe", "sidebar.logout": "Abmelden", "profile.view": "Profil ansehen", "profile.edit": "Profil bearbeiten", "profile.logout": "Abmelden", "actions.create": "Dokument erstellen", "actions.import": "Importieren", "actions.bank": "Dokumentenbank", "actions.deleteSelected": "Auswahl löschen", "actions.searchPlaceholder": "Suche nach Titel...", "documents.listTitle": "Dokumentenliste", "documents.domain": "Bereich:", "documents.type": "Typ:", "documents.license": "Lizenz:", "documents.sortBy": "Sortieren nach:", "documents.newest": "Neueste", "documents.oldest": "Älteste", "domains.all": "Alle", "domains.it": "IT & Software", "domains.finance": "Finanzen", "domains.marketing": "Marketing", "domains.education": "Bildung", "modal.createTitle": "Neues Dokument erstellen", "modal.editTitle": "Dokument bearbeiten", "modal.docTitle": "Titel des Dokuments", "modal.docTitlePlaceholder": "Z.B.: Projektbericht Q4", "modal.description": "Beschreibung", "modal.descriptionPlaceholder": "Kurze Beschreibung des Dokuments...", "modal.domain": "Bereich", "modal.selectDomain": "Wählen Sie einen Bereich", "modal.type": "Dateityp", "modal.selectType": "Wählen Sie einen Typ", "modal.license": "Lizenz", "modal.selectLicense": "Wählen Sie eine Lizenz", "modal.date": "Hinzugefügt am", "modal.cancel": "Abbrechen", "modal.create": "Dokument erstellen", "modal.update": "Aktualisieren", "docActions.open": "Öffnen", "docActions.edit": "Bearbeiten", "docActions.exportPdf": "Als PDF exportieren", "docActions.exportEpoc": "Als EPOC-Paket exportieren", "docActions.delete": "Löschen", "table.header.title": "Titel", "table.header.description": "Beschreibung", "table.header.domain": "Bereich", "table.header.type": "Typ", "table.header.license": "Lizenz", "table.header.date": "Datum", "table.header.actions": "Aktionen", "toast.langChanged": "Sprache auf {lang} geändert", "toast.logoutSuccess": "Erfolgreich abgemeldet. Bis bald!", "swal.logout.title": "Möchten Sie sich wirklich abmelden?", "swal.logout.confirm": "Ja, abmelden!", "swal.logout.cancel": "Abbrechen", "swal.logout.successTitle": "Abgemeldet!", "swal.logout.successText": "Sie wurden erfolgreich abgemeldet.", "swal.delete.title": "\"{title}\" löschen?", "swal.delete.text": "Diese Aktion ist irreversibel!", "swal.delete.confirm": "Ja, löschen!", "swal.delete.successTitle": "Gelöscht!", "swal.delete.successText": "Das Dokument \"{title}\" wurde gelöscht.", "swal.deleteSelected.title": "{count} Dokumente löschen?", "swal.deleteSelected.confirm": "Ja, löschen!", "swal.deleteSelected.successTitle": "Gelöscht!", "swal.deleteSelected.successText": "{count} Dokumente wurden gelöscht.",
+                },
+                es: {
+                    "pageTitle": "Dashboard - ICARTABLE", "header.title": "PANEL DE CONTROL", "sidebar.dashboard": "Panel de Control", "sidebar.myDocuments": "Mis Documentos", "sidebar.users": "Usuarios", "sidebar.settings": "Configuración", "sidebar.help": "Ayuda", "sidebar.logout": "Cerrar Sesión", "profile.view": "Ver Perfil", "profile.edit": "Editar Perfil", "profile.logout": "Cerrar Sesión", "actions.create": "Crear Documento", "actions.import": "Importar", "actions.bank": "Banco de Documentos", "actions.deleteSelected": "Eliminar selección", "actions.searchPlaceholder": "Buscar por título...", "documents.listTitle": "Lista de Documentos", "documents.domain": "Dominio:", "documents.type": "Tipo:", "documents.license": "Licencia:", "documents.sortBy": "Ordenar por:", "documents.newest": "Más reciente", "documents.oldest": "Más antiguo", "domains.all": "Todos", "domains.it": "TI y Software", "domains.finance": "Finanzas", "domains.marketing": "Marketing", "domains.education": "Educación", "modal.createTitle": "Crear Nuevo Documento", "modal.editTitle": "Editar Documento", "modal.docTitle": "Título del documento", "modal.docTitlePlaceholder": "Ej: Informe de Proyecto Q4", "modal.description": "Descripción", "modal.descriptionPlaceholder": "Breve descripción del documento...", "modal.domain": "Dominio", "modal.selectDomain": "Seleccionar un dominio", "modal.type": "Tipo de archivo", "modal.selectType": "Seleccionar un tipo", "modal.license": "Licencia", "modal.selectLicense": "Seleccionar una licencia", "modal.date": "Fecha de adición", "modal.cancel": "Cancelar", "modal.create": "Crear Documento", "modal.update": "Actualizar", "docActions.open": "Abrir", "docActions.edit": "Editar", "docActions.exportPdf": "Exportar como PDF", "docActions.exportEpoc": "Exportar como paquete EPOC", "docActions.delete": "Eliminar", "table.header.title": "Título", "table.header.description": "Descripción", "table.header.domain": "Dominio", "table.header.type": "Tipo", "table.header.license": "Licencia", "table.header.date": "Fecha", "table.header.actions": "Acciones", "toast.langChanged": "Idioma cambiado a {lang}", "toast.logoutSuccess": "Sesión cerrada con éxito. ¡Hasta pronto!", "swal.logout.title": "¿Estás seguro de que quieres cerrar sesión?", "swal.logout.confirm": "¡Sí, cerrar sesión!", "swal.logout.cancel": "Cancelar", "swal.logout.successTitle": "¡Sesión cerrada!", "swal.logout.successText": "Has cerrado la sesión con éxito.", "swal.delete.title": "¿Eliminar \"{title}\"?", "swal.delete.text": "¡Esta acción es irreversible!", "swal.delete.confirm": "¡Sí, eliminar!", "swal.delete.successTitle": "¡Eliminado!", "swal.delete.successText": "El documento \"{title}\" ha sido eliminado.", "swal.deleteSelected.title": "¿Eliminar {count} documentos?", "swal.deleteSelected.confirm": "¡Sí, elimínalos!", "swal.deleteSelected.successTitle": "¡Eliminados!", "swal.deleteSelected.successText": "Se han eliminado {count} documentos.",
+                }
+            };
+
+            let currentLang = localStorage.getItem('language') || 'fr';
+
+            function translatePage() {
+                document.querySelectorAll('[data-lang-key]').forEach(el => {
+                    const key = el.getAttribute('data-lang-key');
+                    const translation = translations[currentLang][key];
+                    if (translation) {
+                        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                            if(el.placeholder) el.placeholder = translation;
+                        } else if (el.querySelector('span')) {
+                           const icon = el.querySelector('i');
+                           if(icon) el.querySelector('span').textContent = " " + translation;
+                           else el.querySelector('span').textContent = translation;
+                        } else {
+                            const icon = el.querySelector('i');
+                            if (icon && el.classList.contains('action-button') && !el.id.includes('deleteSelected')) {
+                                el.innerHTML = icon.outerHTML + ' ' + translation;
+                            } else if (el.classList.contains('nav-link')) {
+                                const textSpan = el.querySelector('span');
+                                if (textSpan) textSpan.textContent = translation;
+                            }
+                            else {
+                                el.textContent = translation;
+                            }
+                        }
+                    }
+                });
+                document.title = translations[currentLang]['pageTitle'];
+                document.documentElement.lang = currentLang;
+            }
+
+            function setLanguage(lang) {
+                currentLang = lang;
+                localStorage.setItem('language', lang);
+                const langName = document.querySelector(`.language-dropdown a[data-lang="${lang}"]`).textContent;
+                selectedLanguageSpan.textContent = langName;
+                translatePage();
+                filterAndSortDocuments();
+            }
+
+            const languageDropdown = document.getElementById('languageDropdown');
+            const dropdownToggle = languageDropdown.querySelector('.dropdown-toggle');
+            const dropdownContent = languageDropdown.querySelector('.dropdown-content');
+            const selectedLanguageSpan = document.getElementById('selectedLanguage');
+
+            dropdownToggle.addEventListener('click', (e) => { e.stopPropagation(); languageDropdown.classList.toggle('open'); });
+
+            dropdownContent.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault(); e.stopPropagation();
+                    const lang = e.target.dataset.lang;
+                    setLanguage(lang);
+                    const langName = e.target.textContent;
+                    Toastify({ text: translations[currentLang]['toast.langChanged'].replace('{lang}', langName), duration: 3000, close: true, gravity: "top", position: "right", style: { background: "linear-gradient(to right, #6c47ff, #a58bff)" } }).showToast();
+                    languageDropdown.classList.remove('open');
+                });
+            });
+
+            function varColor(variableName) { return getComputedStyle(document.documentElement).getPropertyValue(variableName); }
+            const themeToggleBtn = document.getElementById('themeToggle');
+            const body = document.body;
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light-mode') { body.classList.add('light-mode'); themeToggleBtn.querySelector('i').classList.replace('fa-moon', 'fa-sun'); }
+            themeToggleBtn.addEventListener('click', () => {
+                body.classList.toggle('light-mode');
+                localStorage.setItem('theme', body.classList.contains('light-mode') ? 'light-mode' : 'dark-mode');
+                themeToggleBtn.querySelector('i').classList.toggle('fa-moon');
+                themeToggleBtn.querySelector('i').classList.toggle('fa-sun');
+            });
+
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const mobileSidebarToggle = document.getElementById('mobileSidebarToggle');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            sidebarToggle.addEventListener('click', () => { sidebar.classList.toggle('collapsed'); sidebarToggle.querySelector('i').classList.toggle('fa-chevron-left'); sidebarToggle.querySelector('i').classList.toggle('fa-chevron-right'); });
+            mobileSidebarToggle.addEventListener('click', () => { document.body.classList.toggle('sidebar-open'); });
+            sidebarOverlay.addEventListener('click', () => { document.body.classList.remove('sidebar-open'); });
+            function checkSidebarVisibility() { if (window.innerWidth <= 768) { mobileSidebarToggle.style.display = 'block'; sidebarToggle.style.display = 'none'; sidebar.classList.remove('collapsed'); } else { mobileSidebarToggle.style.display = 'none'; sidebarToggle.style.display = 'block'; document.body.classList.remove('sidebar-open'); } }
+            window.addEventListener('resize', checkSidebarVisibility); checkSidebarVisibility();
+            const profileDropdown = document.getElementById('profileDropdown');
+            profilePic.addEventListener('click', (e) => { e.stopPropagation(); profileDropdown.classList.toggle('open'); });
+            document.getElementById('logoutBtn').addEventListener('click', (e) => { e.preventDefault(); profileDropdown.classList.remove('open'); handleLogout(); });
+            document.getElementById('sidebarLogout').addEventListener('click', (e) => { e.preventDefault(); handleLogout(); });
+
+            document.addEventListener('click', (e) => {
+                if (!languageDropdown.contains(e.target)) { languageDropdown.classList.remove('open'); }
+                if (!profileDropdown.contains(e.target)) { profileDropdown.classList.remove('open'); }
+                document.querySelectorAll('.doc-actions.open').forEach(menu => { if (!menu.contains(e.target)) { menu.classList.remove('open'); } });
+                const newDocumentModal = document.getElementById('newDocumentModal');
+                if (newDocumentModal.classList.contains('open') && !newDocumentModal.querySelector('.new-document-modal-content').contains(e.target) && e.target !== document.getElementById('createDocumentBtn')) { closeNewDocumentModal(); }
+            });
+
+            async function handleLogout() {
+                const result = await Swal.fire({ title: translations[currentLang]['swal.logout.title'], icon: 'warning', showCancelButton: true, confirmButtonColor: varColor('--danger-color'), cancelButtonColor: varColor('--primary-purple'), confirmButtonText: translations[currentLang]['swal.logout.confirm'], cancelButtonText: translations[currentLang]['swal.logout.cancel'] });
+                if (result.isConfirmed) { Swal.fire(translations[currentLang]['swal.logout.successTitle'], translations[currentLang]['swal.logout.successText'], 'success'); Toastify({ text: translations[currentLang]['toast.logoutSuccess'], duration: 3000, close: true, gravity: "bottom", position: "left", style: { background: "linear-gradient(to right, #dc3545, #c82333)" } }).showToast(); }
+            }
+
+            // --- Document Management ---
+            let documents = [
+                { id: 'doc1', title: 'Rapport Annuel 2023', domain: 'Finance', type: 'PDF', description: 'Bilan financier complet pour l\'année fiscale 2023.', license: 'Propriétaire', dateAdded: '2023-11-15T10:00:00Z' },
+                { id: 'doc2', title: 'Spécifications API v2.0', domain: 'IT & Logiciels', type: 'DOCX', description: 'Documentation détaillée pour l\'API version 2.0.', license: 'Open Source', dateAdded: '2023-10-20T14:30:00Z' },
+                { id: 'doc3', title: 'Stratégie Marketing Q1 2024', domain: 'Marketing', type: 'PPTX', description: 'Plan d\'action et objectifs marketing pour le premier trimestre 2024.', license: 'Interne', dateAdded: '2023-12-01T09:15:00Z' },
+                { id: 'doc4', title: 'Guide d\'Utilisation Plateforme', domain: 'IT & Logiciels', type: 'PDF', description: 'Manuel complet pour les nouveaux utilisateurs de la plateforme.', license: 'Propriétaire', dateAdded: '2023-09-05T11:00:00Z' },
+                { id: 'doc5', title: 'Budget Prévisionnel 2024', domain: 'Finance', type: 'XLSX', description: 'Tableau de bord des prévisions budgétaires pour l\'année à venir.', license: 'Interne', dateAdded: '2023-11-20T16:00:00Z' },
+                { id: 'doc6', title: 'Cours de Développement Web', domain: 'Éducation', type: 'PDF', description: 'Matériel pédagogique pour le cours avancé de développement web.', license: 'Creative Commons', dateAdded: '2023-08-10T10:00:00Z' },
+            ];
+
+            const documentContainer = document.getElementById('documentContainer');
+            const documentSearchInput = document.getElementById('documentSearch');
+            const sortByDomainSelect = document.getElementById('sortByDomain');
+            const sortByDateSelect = document.getElementById('sortByDate');
+
+            let currentView = 'grid';
+            const gridViewBtn = document.getElementById('gridViewBtn');
+            const tableViewBtn = document.getElementById('tableViewBtn');
+            gridViewBtn.addEventListener('click', () => { if (currentView !== 'grid') { currentView = 'grid'; gridViewBtn.classList.add('active'); tableViewBtn.classList.remove('active'); filterAndSortDocuments(); } });
+            tableViewBtn.addEventListener('click', () => { if (currentView !== 'table') { currentView = 'table'; tableViewBtn.classList.add('active'); gridViewBtn.classList.remove('active'); filterAndSortDocuments(); } });
+
+            function renderDocuments(docsToRender) {
+                documentContainer.innerHTML = '';
+                // NOUVEAU : Réinitialise toujours l'affichage des actions contextuelles
+                updateSelectionActions();
+                if (docsToRender.length === 0) { documentContainer.innerHTML = '<p>Aucun document trouvé.</p>'; return; }
+                if (currentView === 'grid') renderGridView(docsToRender); else renderTableView(docsToRender);
+                addEventListenersToActions();
+            }
+
+            function renderGridView(docs) {
+                const list = document.createElement('div');
+                list.className = 'document-list';
+                docs.forEach(doc => {
+                    list.innerHTML += `
+                        <div class="document-card">
+                            ${createActionsMenu(doc.id)}
+                            <h3 class="doc-title">${doc.title}</h3>
+                            <div class="doc-meta"><i class="fas fa-sitemap"></i><span data-lang-key="documents.domain">Domaine:</span> ${doc.domain}</div>
+                            <div class="doc-meta"><i class="fas fa-file-alt"></i><span data-lang-key="documents.type">Type:</span> ${doc.type}</div>
+                            <div class="doc-meta"><i class="fas fa-certificate"></i><span data-lang-key="documents.license">Licence:</span> ${doc.license}</div>
+                            <p class="doc-description">${doc.description}</p>
+                            <div class="doc-meta"><i class="fas fa-calendar-alt"></i>${new Date(doc.dateAdded).toLocaleDateString(currentLang)}</div>
+                        </div>`;
+                });
+                documentContainer.appendChild(list);
+            }
+
+            function renderTableView(docs) {
+                const table = document.createElement('table');
+                table.className = 'document-table';
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <!-- NOUVEAU : Case "Tout sélectionner" -->
+                            <th class="checkbox-col"><input type="checkbox" id="selectAllCheckbox" title="Tout sélectionner"></th>
+                            <th data-lang-key="table.header.title">Titre</th>
+                            <th data-lang-key="table.header.description">Description</th>
+                            <th data-lang-key="table.header.type">Type</th>
+                            <th data-lang-key="table.header.license">Licence</th>
+                            <th data-lang-key="table.header.date">Date</th>
+                            <th data-lang-key="table.header.actions">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${docs.map(doc => `
+                            <tr>
+                                <!-- NOUVEAU : Case à cocher par document -->
+                                <td class="checkbox-col"><input type="checkbox" class="doc-checkbox" data-doc-id="${doc.id}"></td>
+                                <td>${doc.title}</td>
+                                <td class="doc-description-cell" title="${doc.description}">${doc.description}</td>
+                                <td>${doc.type}</td>
+                                <td>${doc.license}</td>
+                                <td>${new Date(doc.dateAdded).toLocaleDateString(currentLang)}</td>
+                                <td>${createActionsMenu(doc.id)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>`;
+                documentContainer.appendChild(table);
+            }
+
+            function createActionsMenu(docId) {
+                return `
+                    <div class="doc-actions">
+                        <button class="action-menu-btn" data-doc-id="${docId}"><i class="fas fa-ellipsis-v"></i></button>
+                        <div class="action-menu-content">
+                            <a href="#" data-action="open" data-doc-id="${docId}" data-lang-key="docActions.open"><i class="fas fa-eye"></i></a>
+                            <a href="#" data-action="edit" data-doc-id="${docId}" data-lang-key="docActions.edit"><i class="fas fa-edit"></i></a>
+                            <a href="#" data-action="export-pdf" data-doc-id="${docId}" data-lang-key="docActions.exportPdf"><i class="fas fa-file-pdf"></i></a>
+                            <a href="#" data-action="export-epoc" data-doc-id="${docId}" data-lang-key="docActions.exportEpoc"><i class="fas fa-box-open"></i></a>
+                            <a href="#" data-action="delete" data-doc-id="${docId}" class="delete" data-lang-key="docActions.delete"><i class="fas fa-trash-alt"></i></a>
+                        </div>
+                    </div>`;
+            }
+
+            function addEventListenersToActions() {
+                translatePage();
+                documentContainer.querySelectorAll('.action-menu-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        document.querySelectorAll('.doc-actions.open').forEach(openMenu => { if (openMenu !== btn.parentElement) openMenu.classList.remove('open'); });
+                        btn.parentElement.classList.toggle('open');
+                    });
+                });
+                documentContainer.querySelectorAll('.action-menu-content a').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault(); e.stopPropagation();
+                        const docId = e.currentTarget.dataset.docId;
+                        const action = e.currentTarget.dataset.action;
+                        e.currentTarget.closest('.doc-actions').classList.remove('open');
+                        handleDocumentAction(docId, action);
+                    });
+                });
+
+                // NOUVEAU : Gestion des cases à cocher
+                if (currentView === 'table') {
+                    const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+                    const docCheckboxes = document.querySelectorAll('.doc-checkbox');
+
+                    selectAllCheckbox.addEventListener('change', (e) => {
+                        docCheckboxes.forEach(checkbox => checkbox.checked = e.target.checked);
+                        updateSelectionActions();
+                    });
+
+                    docCheckboxes.forEach(checkbox => {
+                        checkbox.addEventListener('change', () => {
+                            selectAllCheckbox.checked = [...docCheckboxes].every(c => c.checked);
+                            updateSelectionActions();
+                        });
+                    });
+                }
+            }
+
+            // NOUVEAU : Gère l'affichage des boutons d'action
+            function updateSelectionActions() {
+                const defaultActions = document.getElementById('defaultActions');
+                const selectionActions = document.getElementById('selectionActions');
+                const selectedCheckboxes = document.querySelectorAll('.doc-checkbox:checked');
+                const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+
+                if (selectedCheckboxes.length > 0 && currentView === 'table') {
+                    defaultActions.style.display = 'none';
+                    selectionActions.style.display = 'flex';
+                    // Met à jour le texte du bouton avec le nombre d'éléments
+                    const baseText = translations[currentLang]['actions.deleteSelected'] || 'Supprimer la sélection';
+                    deleteSelectedBtn.innerHTML = `<i class="fas fa-trash-alt"></i> ${baseText} (${selectedCheckboxes.length})`;
+                } else {
+                    defaultActions.style.display = 'flex';
+                    selectionActions.style.display = 'none';
+                }
+            }
+
+
+            function filterAndSortDocuments() {
+                let filteredDocs = [...documents];
+                const searchTerm = documentSearchInput.value.toLowerCase();
+                if (searchTerm) { filteredDocs = filteredDocs.filter(doc => doc.title.toLowerCase().includes(searchTerm)); }
+                const selectedDomain = sortByDomainSelect.value;
+                if (selectedDomain !== 'all') { filteredDocs = filteredDocs.filter(doc => doc.domain === selectedDomain); }
+                const sortOrder = sortByDateSelect.value;
+                filteredDocs.sort((a, b) => { const dateA = new Date(a.dateAdded); const dateB = new Date(b.dateAdded); return sortOrder === 'newest' ? dateB - dateA : dateA - b; });
+                renderDocuments(filteredDocs);
+            }
+
+            documentSearchInput.addEventListener('input', filterAndSortDocuments);
+            sortByDomainSelect.addEventListener('change', filterAndSortDocuments);
+            sortByDateSelect.addEventListener('change', filterAndSortDocuments);
+
+            async function handleDocumentAction(docId, action) {
+                const doc = documents.find(d => d.id === docId);
+                if (!doc) return;
+                switch (action) {
+                    case 'edit': openNewDocumentModal(doc); break;
+                    case 'export-pdf': Toastify({ text: `Export PDF: "${doc.title}"`, duration: 3000 }).showToast(); break;
+                    case 'export-epoc': Toastify({ text: `Export EPOC: "${doc.title}"`, duration: 3000 }).showToast(); break;
+                    case 'delete':
+                        const result = await Swal.fire({ title: translations[currentLang]['swal.delete.title'].replace('{title}', doc.title), text: translations[currentLang]['swal.delete.text'], icon: 'warning', showCancelButton: true, confirmButtonColor: varColor('--danger-color'), cancelButtonColor: varColor('--primary-purple'), confirmButtonText: translations[currentLang]['swal.delete.confirm'], cancelButtonText: translations[currentLang]['swal.logout.cancel'] });
+                        if (result.isConfirmed) {
+                            documents = documents.filter(d => d.id !== docId);
+                            filterAndSortDocuments();
+                            Swal.fire(translations[currentLang]['swal.delete.successTitle'], translations[currentLang]['swal.delete.successText'].replace('{title}', doc.title), 'success');
+                        }
+                        break;
+                }
+            }
+
+            // NOUVEAU : Action de suppression des éléments sélectionnés
+            document.getElementById('deleteSelectedBtn').addEventListener('click', async () => {
+                const selectedIds = [...document.querySelectorAll('.doc-checkbox:checked')].map(cb => cb.dataset.docId);
+                if (selectedIds.length === 0) return;
+
+                const result = await Swal.fire({
+                    title: translations[currentLang]['swal.deleteSelected.title'].replace('{count}', selectedIds.length),
+                    text: translations[currentLang]['swal.delete.text'],
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: varColor('--danger-color'),
+                    cancelButtonColor: varColor('--primary-purple'),
+                    confirmButtonText: translations[currentLang]['swal.deleteSelected.confirm'],
+                    cancelButtonText: translations[currentLang]['swal.logout.cancel']
+                });
+
+                if (result.isConfirmed) {
+                    documents = documents.filter(doc => !selectedIds.includes(doc.id));
+                    filterAndSortDocuments();
+                    Swal.fire(
+                        translations[currentLang]['swal.deleteSelected.successTitle'],
+                        translations[currentLang]['swal.deleteSelected.successText'].replace('{count}', selectedIds.length),
+                        'success'
+                    );
+                }
+            });
+
+
+            const createDocumentBtn = document.getElementById('createDocumentBtn');
+            const newDocumentModal = document.getElementById('newDocumentModal');
+            const closeDocumentModalBtn = document.getElementById('closeDocumentModal');
+            const cancelNewDocumentBtn = document.getElementById('cancelNewDocument');
+            const newDocumentForm = document.getElementById('newDocumentForm');
+            const newDocTitleInput = document.getElementById('newDocTitle');
+            const newDocDescriptionInput = document.getElementById('newDocDescription');
+            const newDocDomainSelect = document.getElementById('newDocDomain');
+            const newDocTypeSelect = document.getElementById('newDocType');
+            const newDocLicenseSelect = document.getElementById('newDocLicense');
+            const newDocDateInput = document.getElementById('newDocDate');
+            let editingDocId = null;
+
+            function openNewDocumentModal(doc = null) {
+                newDocumentModal.classList.add('open');
+                if (doc) {
+                    editingDocId = doc.id;
+                    newDocumentModal.querySelector('h2').setAttribute('data-lang-key', 'modal.editTitle');
+                    newDocTitleInput.value = doc.title;
+                    newDocDescriptionInput.value = doc.description;
+                    newDocDomainSelect.value = doc.domain;
+                    newDocTypeSelect.value = doc.type;
+                    newDocLicenseSelect.value = doc.license;
+                    newDocDateInput.value = doc.dateAdded ? new Date(doc.dateAdded).toISOString().split('T')[0] : '';
+                    newDocumentForm.querySelector('.btn-submit').setAttribute('data-lang-key', 'modal.update');
+                } else {
+                    editingDocId = null;
+                    newDocumentModal.querySelector('h2').setAttribute('data-lang-key', 'modal.createTitle');
+                    newDocumentForm.reset();
+                    newDocDateInput.value = new Date().toISOString().split('T')[0];
+                    newDocumentForm.querySelector('.btn-submit').setAttribute('data-lang-key', 'modal.create');
+                }
+                translatePage();
+            }
+
+            function closeNewDocumentModal() { newDocumentModal.classList.remove('open'); newDocumentForm.reset(); editingDocId = null; }
+            createDocumentBtn.addEventListener('click', () => openNewDocumentModal());
+            closeDocumentModalBtn.addEventListener('click', closeNewDocumentModal);
+            cancelNewDocumentBtn.addEventListener('click', closeNewDocumentModal);
+
+            newDocumentForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const docData = { title: newDocTitleInput.value, description: newDocDescriptionInput.value, domain: newDocDomainSelect.value, type: newDocTypeSelect.value, license: newDocLicenseSelect.value, dateAdded: new Date(newDocDateInput.value).toISOString() };
+                if (editingDocId) { documents = documents.map(doc => doc.id === editingDocId ? { ...doc, ...docData } : doc); }
+                else { const newId = `doc${Date.now()}`; documents.unshift({ id: newId, ...docData }); }
+                filterAndSortDocuments();
+                closeNewDocumentModal();
+            });
+
+            setLanguage(currentLang);
+        });
+    </script>
+</body>
+</html>
