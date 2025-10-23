@@ -3,973 +3,504 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S'identifier / S'inscrire</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- SweetAlert2 CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <!-- Toastify CSS -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-
+    <title>ICARTABLE</title>
+    <!-- Ajout de Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
+        /* --- Importation de la police --- */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
+
+        /* --- Variables de couleur pour le thème --- */
         :root {
-            --primary-purple: #6c47ff;
-            --dark-purple: #2c213f;
-            --light-purple: #a58bff;
-            --text-color: #e0e0e0;
-            --input-bg: #3c3053;
-            --border-color: #5a4b7d;
-            --placeholder-color: #9e9e9e;
+            /* Thème Clair (Bleu clair et Blanc) */
+            --bg-color-light: #ffffff;
+            --banner-bg-light: #ffffff;
+            --text-color-light: #2c3e50; /* Texte sombre pour lisibilité */
+            --text-secondary-light: #7f8c8d;
+            --accent-color: #3498db; /* Bleu clair */
+            --gradient-start: #3498db;
+            --gradient-end: #2980b9;
+            --form-bg-light: rgba(255, 255, 255, 0.1);
+            --form-border-light: rgba(255, 255, 255, 0.3);
+
+            /* Thème Sombre */
+            --bg-color-dark: #121212;
+            --banner-bg-dark: #1a1a2e;
+            --text-color-dark: #e0e0e0;
+            --text-secondary-dark: #a0a0a0;
+            --form-bg-dark: rgba(0, 0, 0, 0.2);
+            --form-border-dark: rgba(255, 255, 255, 0.2);
+
+            /* Couleurs communes */
+            --success-color: #28a745;
+            --error-color: #dc3545;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
+        /* --- Styles de base --- */
         body {
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-color-light);
+            color: var(--text-color-light);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-color: #1e1b2f;
-            color: var(--text-color);
-            padding: 20px;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        .container {
+        body.dark-theme {
+            background-color: var(--bg-color-dark);
+            color: var(--text-color-dark);
+        }
+
+        .banner {
+            margin: 0;
+            width: 100%;
             display: flex;
-            width: 900px;
-            height: 600px;
-            background-color: var(--dark-purple);
-            border-radius: 15px;
+            position: relative;
+            background: var(--banner-bg-light);
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            max-width: 100%;
-            max-height: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            min-height: 100vh;
+            transition: background-color 0.3s ease;
         }
 
-        .left-panel {
-            width: 45%;
-            background-color: #2c213f;
-            position: relative;
+        body.dark-theme .banner {
+            background: var(--banner-bg-dark);
+        }
+
+        .info-section {
+            width: 55%;
+            padding: 20px 60px;
+            box-sizing: border-box;
+            color: var(--text-color-light);
+            z-index: 2;
             display: flex;
             flex-direction: column;
-            color: white;
+        }
+        body.dark-theme .info-section {
+            color: var(--text-color-dark);
         }
 
-        .left-panel .header {
+        .main-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 30px;
+            width: 100%;
+            padding: 15px 0;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.2rem;
             z-index: 10;
         }
 
-        .left-panel .header .logo {
-            width: 60px;
-            height: 20px;
-            background-color: white;
-            border-radius: 3px;
+        .logo-icon {
+            width: 50%;
+            margin-right: 12px;
+        }
+
+        .navigation-wrapper {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            color: #2c213f;
+            gap: 25px;
         }
 
-        .left-panel .header .back-to-website {
-            color: var(--text-color);
-            text-decoration: none;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-        }
+        nav ul { margin: 0; padding: 0; list-style: none; display: flex; gap: 25px; }
+        nav a { color: var(--text-color-light); text-decoration: none; font-weight: 700; font-size: 0.9rem; transition: color 0.2s; }
+        body.dark-theme nav a { color: var(--text-color-dark); }
+        nav a:hover { color: var(--accent-color); }
 
-        .left-panel .header .back-to-website i {
-            margin-left: 8px;
-        }
+        .controls { display: flex; align-items: center; gap: 20px; }
 
-        /* Language Dropdown */
-        .language-dropdown {
-            position: relative;
-            margin-left: auto;
+        #language-select {
+            background: none;
+            border: 1px solid var(--text-color-light);
+            color: var(--text-color-light);
+            cursor: pointer;
+            padding: 5px 8px;
+            border-radius: 4px;
+            font-family: 'Montserrat', sans-serif;
+            transition: background-color 0.2s, color 0.2s, border-color 0.2s;
         }
+        #language-select option { background-color: var(--banner-bg-light); color: black; }
+        body.dark-theme #language-select option { background-color: var(--banner-bg-dark); color: white; }
+        body.dark-theme #language-select { border-color: var(--text-color-dark); color: var(--text-color-dark); }
+        #language-select:hover { background-color: var(--accent-color); border-color: var(--accent-color); color: white; }
 
-        .language-dropdown button {
+        #theme-toggle {
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: var(--text-color-light);
+            transition: color 0.2s, transform 0.3s;
+        }
+        body.dark-theme #theme-toggle { color: var(--text-color-dark); }
+        #theme-toggle:hover { color: var(--accent-color); transform: scale(1.1); }
+
+        .menu-toggle {
+            display: none;
             background: none;
             border: none;
-            color: var(--text-color);
-            font-size: 14px;
+            font-size: 1.5rem;
             cursor: pointer;
-            padding: 5px 10px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
+            color: var(--text-color-light);
+            z-index: 1001;
         }
-        .language-dropdown button:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
+        body.dark-theme .menu-toggle { color: var(--text-color-dark); }
 
-        .language-dropdown .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: var(--input-bg);
-            min-width: 120px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
-            right: 0;
-            border-radius: 8px;
-            overflow: hidden;
-        }
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+        .title { font-size: 2rem; font-weight: 400; color: var(--accent-color); margin: 0; letter-spacing: 1px; }
+        .subtitle { font-size: 3.5rem; font-weight: 800; margin: 0 0 20px 0; line-height: 1.1; }
+        .description { font-size: 0.9rem; color: var(--text-secondary-light); line-height: 1.6; max-width: 400px; margin-bottom: 40px; }
+        body.dark-theme .description { color: var(--text-secondary-dark); }
+        .contact-details { display: flex; align-items: center; flex-wrap: wrap; gap: 25px; font-size: 0.9rem; }
+        .contact-item { display: flex; align-items: center; }
+        .contact-item .icon { width: 20px; height: 20px; border-radius: 50%; background: var(--accent-color); margin-right: 10px; }
 
-        .language-dropdown .dropdown-content a {
-            color: var(--text-color);
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-            font-size: 14px;
-            transition: background-color 0.3s ease;
-        }
-
-        .language-dropdown .dropdown-content a:hover {
-            background-color: var(--border-color);
-        }
-
-        .language-dropdown.open .dropdown-content {
-            display: block;
-        }
-
-        .slider {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-
-        .slider-image {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+        .auth-section {
+            width: 45%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: linear-gradient(to right, rgba(0, 114, 255, 0.4), rgba(0, 198, 255, 0.5)), url(img2.png);
             background-size: cover;
-            background-position: center;
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
+            background-position: center top;
+        }
+        .auth-section::before { content: ''; position: absolute; left: -150px; top: 0; width: 250px; height: 100%; background: linear-gradient(155deg, var(--gradient-start), var(--gradient-end)); transform: skewX(-15deg); z-index: 1; }
+
+        /* Styles pour le formulaire... */
+        .form-container { width: 70%; max-width: 400px; padding: 30px; background: var(--form-bg-light); backdrop-filter: blur(10px); border-radius: 10px; border: 1px solid var(--form-border-light); z-index: 5; color: white; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); }
+        body.dark-theme .form-container { background: var(--form-bg-dark); border-color: var(--form-border-dark); }
+        .form-container h2 { margin-top: 0; text-align: center; font-weight: 700; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-size: 0.9rem; font-weight: 600; }
+        .form-group input { width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.2); border: 1px solid var(--form-border-light); border-radius: 5px; color: white; font-family: 'Montserrat', sans-serif; box-sizing: border-box; }
+        body.dark-theme .form-group input { border-color: var(--form-border-dark); }
+        .form-group input::placeholder { color: rgba(255, 255, 255, 0.7); }
+        .submit-btn { width: 100%; padding: 12px; background: linear-gradient(to right, var(--gradient-start), var(--gradient-end)); border: none; color: white; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; border-radius: 5px; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .submit-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0, 198, 255, 0.3); }
+        .form-switch, .forgot-password { text-align: center; margin-top: 15px; font-size: 0.9rem; }
+        .form-switch a, .forgot-password a { color: var(--accent-color); text-decoration: none; font-weight: 700; cursor: pointer; }
+        #register-form { display: none; }
+        .forgot-password { margin-top: 10px; }
+
+        /* Styles pour les modales et notifications (inchangés)... */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 1000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); animation: fadeInModal 0.3s ease-out; }
+        .modal-content { background: var(--bg-color-light); color: #333; padding: 0; border-radius: 8px; width: 90%; max-width: 450px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); text-align: center; animation: slideInModal 0.3s ease-out; }
+        body.dark-theme .modal-content { background: #2c2c3e; color: var(--text-color-dark); }
+        .modal-header { padding: 15px 20px; border-bottom: 1px solid #eee; font-size: 1.2rem; font-weight: 700; border-top-left-radius: 8px; border-top-right-radius: 8px;}
+        body.dark-theme .modal-header { border-bottom-color: #444; }
+        .modal-header.success { background-color: var(--success-color); color: white; }
+        .modal-header.error { background-color: var(--error-color); color: white; }
+        .modal-header.info { background: #3498db; color: white; }
+        .modal-body { padding: 25px 20px; font-size: 1rem; line-height: 1.5; }
+        .modal-body p { margin: 0 0 15px 0; }
+        .modal-body .form-group input { color: #333; background: rgba(0, 0, 0, 0.05); border: 1px solid #ccc; }
+        body.dark-theme .modal-body .form-group input { color: white; background: rgba(255, 255, 255, 0.1); border-color: #555; }
+        .modal-footer { padding: 15px; border-top: 1px solid #eee; }
+        body.dark-theme .modal-footer { border-top-color: #444; }
+        .modal-close { background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: background-color 0.2s; }
+        .modal-close:hover { background: #c0392b; }
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; }
+        .toast { padding: 15px 20px; border-radius: 5px; color: white; font-weight: 600; box-shadow: 0 3px 10px rgba(0,0,0,0.2); animation: slideInToast 0.3s ease-out forwards; }
+        .toast.info { background-color: #3498db; }
+        .toast.success { background-color: var(--success-color); }
+        .toast.error { background-color: var(--error-color); }
+        @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideInModal { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideInToast { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* --- STYLES RESPONSIVE --- */
+        @media (max-width: 1024px) {
+            .banner { flex-direction: column; min-height: unset; }
+            .info-section, .auth-section { width: 100%; min-height: 50vh; }
+            .auth-section { min-height: 60vh; }
+            .info-section { padding: 40px; }
+            .auth-section::before { display: none; }
+            .form-container { width: 80%; }
+            .subtitle { font-size: 2.8rem; }
         }
 
-        .slider-image.active {
-            opacity: 1;
-        }
-
-        .text-content {
-            position: absolute;
-            bottom: 30px;
-            left: 30px;
-            z-index: 10;
-        }
-
-        .text-content h2 {
-            font-size: 24px;
-            margin-bottom: 15px;
-            font-weight: 500;
-        }
-
-        .slider-dots {
-            display: flex;
-            gap: 8px;
-        }
-
-        .slider-dots .dot {
-            width: 8px;
-            height: 8px;
-            background-color: rgba(255, 255, 255, 0.4);
-            border-radius: 50%;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .slider-dots .dot.active {
-            background-color: white;
-            width: 25px;
-            border-radius: 5px;
-        }
-
-        .right-panel {
-            width: 55%;
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .right-panel h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            color: white;
-        }
-
-        .toggle-form-prompt {
-            font-size: 14px;
-            margin-bottom: 30px;
-            color: var(--text-color);
-        }
-
-        .toggle-form-prompt .toggle-link {
-            color: var(--primary-purple);
-            text-decoration: none;
-            font-weight: 500;
-            cursor: pointer;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group-inline {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .form-group-inline input {
-            flex: 1;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"] {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background-color: var(--input-bg);
-            color: var(--text-color);
-            font-size: 15px;
-            outline: none;
-            transition: border-color 0.3s ease;
-        }
-
-        input[type="text"]::placeholder,
-        input[type="email"]::placeholder,
-        input[type="password"]::placeholder {
-            color: var(--placeholder-color);
-        }
-
-        input[type="text"]:focus,
-        input[type="email"]:focus,
-        input[type="password"]:focus {
-            border-color: var(--primary-purple);
-        }
-
-        .password-group {
-            position: relative;
-        }
-
-        .password-group .password-toggle {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--placeholder-color);
-            cursor: pointer;
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .checkbox-group input[type="checkbox"] {
-            appearance: none;
-            width: 18px;
-            height: 18px;
-            border: 2px solid var(--primary-purple);
-            border-radius: 4px;
-            background-color: var(--input-bg);
-            cursor: pointer;
-            position: relative;
-            margin-right: 10px;
-            flex-shrink: 0;
-        }
-
-        .checkbox-group input[type="checkbox"]:checked {
-            background-color: var(--primary-purple);
-            border-color: var(--primary-purple);
-        }
-
-        .checkbox-group input[type="checkbox"]:checked::after {
-            content: '\f00c'; /* FontAwesome check icon */
-            font-family: 'Font Awesome 5 Free';
-            font-weight: 900;
-            color: white;
-            font-size: 12px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .checkbox-group label {
-            font-size: 14px;
-            color: var(--text-color);
-        }
-
-        .checkbox-group label a {
-            color: var(--light-purple);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .action-button {
-            width: 100%;
-            padding: 14px;
-            background-color: var(--primary-purple);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-bottom: 25px;
-        }
-
-        .action-button:hover {
-            background-color: #5a3ed0;
-        }
-
-        .or-register {
-            text-align: center;
-            font-size: 14px;
-            color: var(--placeholder-color);
-            margin-bottom: 25px;
-            position: relative;
-        }
-
-        .or-register::before,
-        .or-register::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            width: 35%;
-            height: 1px;
-            background-color: var(--border-color);
-        }
-
-        .or-register::before {
-            left: 0;
-        }
-
-        .or-register::after {
-            right: 0;
-        }
-
-        .social-login {
-            display: flex;
-            gap: 15px;
-        }
-
-        .social-btn {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 12px;
-            background-color: var(--input-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-color);
-            font-size: 15px;
-            cursor: pointer;
-            transition: border-color 0.3s ease, background-color 0.3s ease;
-        }
-
-        .social-btn:hover {
-            border-color: var(--primary-purple);
-            background-color: #352a4a;
-        }
-
-        .social-btn img {
-            margin-right: 10px;
-            width: 18px;
-            height: 18px;
-        }
-
-        /* Classes pour cacher/afficher des éléments */
-        .hidden {
-            display: none !important;
-        }
-
-        /* --- Media Queries pour la réactivité --- */
-
-        /* Écrans plus petits que 900px (tablettes, petits ordinateurs portables) */
-        @media (max-width: 900px) {
-            .container {
-                width: 90%;
-                height: auto;
-                flex-direction: column;
-            }
-
-            .left-panel, .right-panel {
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            .navigation-wrapper {
+                position: absolute;
+                top: 80px;
+                left: 0;
                 width: 100%;
-                padding: 30px;
-            }
-
-            .left-panel {
-                height: 250px;
-                border-bottom-left-radius: 0;
-                border-bottom-right-radius: 0;
-            }
-
-            .right-panel {
-                padding-top: 30px;
-            }
-
-            .text-content {
-                bottom: 20px;
-                left: 20px;
-            }
-
-            .left-panel .header {
-                padding: 15px 20px;
-            }
-
-            .right-panel h1 {
-                font-size: 28px;
-            }
-
-            .form-group-inline {
+                background-color: var(--banner-bg-light);
                 flex-direction: column;
-                gap: 15px;
+                padding: 20px 0;
+                gap: 20px;
+                box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+                transform: translateY(-120%);
+                transition: transform 0.3s ease-in-out;
+                z-index: 1000;
             }
-
-            .or-register::before,
-            .or-register::after {
-                width: 25%;
+            body.dark-theme .navigation-wrapper {
+                background-color: var(--banner-bg-dark);
             }
+            .navigation-wrapper.is-open {
+                transform: translateY(0);
+            }
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            .subtitle { font-size: 2.2rem; }
+            .title { font-size: 1.5rem; }
+            .description { max-width: 100%; }
+            .form-container { width: 90%; padding: 25px; }
         }
 
-        /* Écrans très petits (mobiles) */
-        @media (max-width: 576px) {
-            body {
-                padding: 10px;
-            }
-
-            .container {
-                border-radius: 10px;
-            }
-
-            .left-panel {
-                height: 200px;
-            }
-
-            .text-content h2 {
-                font-size: 20px;
-                margin-bottom: 10px;
-            }
-
-            .text-content {
-                bottom: 15px;
-                left: 15px;
-            }
-
-            .right-panel {
-                padding: 20px;
-            }
-
-            .right-panel h1 {
-                font-size: 24px;
-            }
-
-            .toggle-form-prompt {
-                margin-bottom: 20px;
-            }
-
-            .action-button {
-                padding: 12px;
-                font-size: 15px;
-            }
-
-            .social-login {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .social-btn {
-                padding: 10px;
-                font-size: 14px;
-            }
-
-            .social-btn img {
-                margin-right: 8px;
-                width: 16px;
-                height: 16px;
-            }
+        @media (max-width: 480px) {
+            body { font-size: 14px; }
+            .info-section { padding: 25px; }
+            .subtitle { font-size: 1.8rem; }
+            .title { font-size: 1.2rem; }
+            .logo-icon { width: 50px; }
+            .logo { font-size: 1rem; }
+            .contact-details { flex-direction: column; align-items: flex-start; gap: 15px; }
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="left-panel">
-            <div class="header">
-                <img src="https://via.placeholder.com/50x20?text=AMU" alt="AMU Logo" class="logo">
-                <a href="#" class="back-to-website">Back to website <i class="fas fa-arrow-right"></i></a>
-                <!-- Language Dropdown -->
-                <div class="language-dropdown" id="languageDropdown">
-                    <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-globe"></i> <span id="selectedLanguage">Français</span> <i class="fas fa-caret-down"></i>
-                    </button>
-                    <div class="dropdown-content" aria-labelledby="selectedLanguage">
-                        <a href="#" data-lang="fr">Français</a>
-                        <a href="#" data-lang="en">English</a>
-                        <a href="#" data-lang="es">Español</a>
+<body class="dark-theme"> <!-- Thème sombre par défaut -->
+
+    <div class="banner">
+        <!-- SECTION GAUCHE -->
+        <div class="info-section">
+            <header class="main-header">
+                <div class="logo">
+                    <img src="logo.png" alt="iCartable Logo" class="logo-icon"/>
+                </div>
+                <div class="navigation-wrapper">
+                    <nav>
+                        <ul>
+                            <li><a href="#" data-translate="menu_home">Accueil</a></li>
+                            <li><a href="#" data-translate="menu_about">À propos</a></li>
+                            <li><a href="#" data-translate="menu_contact">Contact</a></li>
+                        </ul>
+                    </nav>
+                     <div class="controls">
+                        <select id="language-select" title="Changer de langue">
+                            <option value="fr">Français</option>
+                            <option value="en">English</option>
+                            <option value="es">Español</option>
+                            <option value="de">Deutsch</option>
+                        </select>
+                        <i id="theme-toggle" class="fa-solid fa-sun" title="Changer de thème"></i>
                     </div>
                 </div>
-            </div>
-            <div class="slider">
-                <div class="slider-image active" style="background-image: url('./img.png');"></div>
-                <div class="slider-image" style="background-image: url('https://images.unsplash.com/photo-1549490349-8664152cdb70?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');"></div>
-                <div class="slider-image" style="background-image: url('https://images.unsplash.com/photo-1532297127988-16ef7b848c78?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');"></div>
-            </div>
-            <div class="text-content">
-                <h2>Capturing Moments, Creating Memories</h2>
-                <div class="slider-dots">
-                    <span class="dot active"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
+                <button class="menu-toggle" aria-label="Ouvrir le menu" data-translate-aria="toggle_menu_label">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </header>
+
+            <div class="main-content">
+                <h2 class="title" data-translate="main_title">LA TECHNOLOGIE</h2>
+                <h1 class="subtitle" data-translate="main_subtitle">Au service de l'éducation</h1>
+                <p class="description" data-translate="main_description">Une plateforme tout-en-un pour les enseignants : accédez à vos documents scolaires partout, collaborez avec d’autres professeurs et suivez la performance de vos élèves en temps réel.</p>
+                <div class="contact-details">
+                    <div class="contact-item"><div class="icon"></div><span>+00 123 453 673</span></div>
+                    <div class="contact-item"><div class="icon"></div><span>@DEV4EDU</span></div>
                 </div>
+                <p style="margin-top: 25px; font-weight: bold;" data-translate="main_priority">Professeurs, élèves — vous faciliter la vie, c’est notre priorité.</p>
             </div>
         </div>
-        <div class="right-panel">
-            <!-- Registration Form (Default) -->
-            <div id="registrationForm">
-                <h1>Creer un compte</h1>
-                <p class="toggle-form-prompt">Vous avez deja un compte ? <a href="#" class="toggle-link" data-form="login">Connexion</a></p>
-                <form id="registerForm">
-                    <div class="form-group-inline">
-                        <input type="text" id="regFirstName" placeholder="Votre nom">
-                        <input type="text" id="regLastName" placeholder="Prenom">
+
+        <!-- SECTION DROITE -->
+        <div class="auth-section">
+            <div class="form-container">
+                <form id="login-form">
+                    <h2 data-translate="login_title">Connexion</h2>
+                    <div class="form-group">
+                        <label for="login-id" data-translate="form_userid">Code identifiant</label>
+                        <input type="text" id="login-id" required>
                     </div>
                     <div class="form-group">
-                        <input type="email" id="regEmail" placeholder="Email">
+                        <label for="login-password" data-translate="form_password">Mot de passe</label>
+                        <input type="password" id="login-password" required>
                     </div>
-                    <div class="form-group password-group">
-                        <input type="password" id="regPassword" placeholder="Entrer mot de passe">
-                        <i class="fas fa-eye password-toggle"></i>
-                    </div>
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="terms" checked>
-                        <label for="terms">I agree to the <a href="#">Terms & Conditions</a></label>
-                    </div>
-                    <button type="submit" class="action-button">Creer un compte</button>
+                    <button type="submit" class="submit-btn" data-translate="login_button">Se connecter</button>
+                    <p class="forgot-password"><a href="#" id="forgot-password-link" data-translate="forgot_password_link">Mot de passe oublié ?</a></p>
+                    <p class="form-switch"><span data-translate="login_switch_text">Pas de compte ?</span> <a id="show-register" data-translate="login_switch_link">Inscrivez-vous</a></p>
                 </form>
-            </div>
 
-            <!-- Login Form (Initially Hidden) -->
-            <div id="loginForm" class="hidden">
-                <h1>Bon Retour!</h1>
-                <p class="toggle-form-prompt">Vous n'avez pas de compte? <a href="#" class="toggle-link" data-form="register">Inscription</a></p>
-                <form id="loginFormActual">
-                    <div class="form-group">
-                        <input type="email" id="loginEmail" placeholder="Email">
-                    </div>
-                    <div class="form-group password-group">
-                        <input type="password" id="loginPassword" placeholder="Password">
-                        <i class="fas fa-eye password-toggle"></i>
-                    </div>
-                    <p style="margin-bottom: 25px;"><a href="#" style="color: var(--light-purple); text-decoration: none; font-size: 14px;">Forgot password?</a></p>
-                    <button type="submit" class="action-button">Log in</button>
+                <form id="register-form">
+                    <h2 data-translate="register_title">Inscription</h2>
+                    <div class="form-group"><label for="register-name" data-translate="form_name">Nom complet</label><input type="text" id="register-name" required></div>
+                    <div class="form-group"><label for="register-email" data-translate="form_email">Email</label><input type="email" id="register-email" required></div>
+                    <div class="form-group"><label for="register-password" data-translate="form_password">Mot de passe</label><input type="password" id="register-password" required></div>
+                    <button type="submit" class="submit-btn" data-translate="register_button">Créer un compte</button>
+                     <p class="form-switch"><span data-translate="register_switch_text">Déjà un compte ?</span> <a id="show-login" data-translate="register_switch_link">Connectez-vous</a></p>
                 </form>
-            </div>
-
-            <!-- Common social login for both forms -->
-            <p class="or-register">Or register/log in with</p>
-            <div class="social-login">
-                <button class="social-btn"><img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google"> Google</button>
-                <button class="social-btn"><img src="https://img.icons8.com/ios-filled/16/000000/mac-os.png" alt="Apple"> Apple</button>
             </div>
         </div>
     </div>
 
-    <!-- SweetAlert2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Toastify JS -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
+    <!-- Modales (inchangées) -->
+    <div id="popup-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div id="popup-header" class="modal-header"></div>
+            <div id="popup-body" class="modal-body"></div>
+            <div class="modal-footer">
+                <button id="popup-close" class="modal-close" data-translate="popup_close">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="password-reset-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div id="password-reset-header" class="modal-header info" data-translate="reset_password_title">Réinitialiser le mot de passe</div>
+            <div class="modal-body">
+                <form id="request-code-step">
+                    <p data-translate="reset_step1_text">Veuillez saisir votre adresse e-mail pour recevoir un code de vérification.</p>
+                    <div class="form-group">
+                        <label for="reset-email" data-translate="form_email">Email</label>
+                        <input type="email" id="reset-email" required>
+                    </div>
+                    <button type="submit" class="submit-btn" data-translate="reset_step1_button">Envoyer le code</button>
+                </form>
+                <form id="verify-code-step" style="display:none;">
+                    <p data-translate="reset_step2_text">Un code a été envoyé à votre adresse e-mail. Veuillez le saisir ci-dessous.</p>
+                    <div class="form-group">
+                        <label for="verification-code" data-translate="reset_step2_label">Code de vérification</label>
+                        <input type="text" id="verification-code" required>
+                    </div>
+                    <button type="submit" class="submit-btn" data-translate="reset_step2_button">Vérifier</button>
+                </form>
+                <form id="set-new-password-step" style="display:none;">
+                    <p data-translate="reset_step3_text">Le code est correct. Veuillez définir votre nouveau mot de passe.</p>
+                    <div class="form-group">
+                        <label for="new-password" data-translate="form_new_password">Nouveau mot de passe</label>
+                        <input type="password" id="new-password" required>
+                    </div>
+                     <div class="form-group">
+                        <label for="confirm-password" data-translate="form_confirm_password">Confirmer le mot de passe</label>
+                        <input type="password" id="confirm-password" required>
+                    </div>
+                    <button type="submit" class="submit-btn" data-translate="reset_step3_button">Enregistrer</button>
+                </form>
+            </div>
+             <div class="modal-footer">
+                <button id="password-reset-close" class="modal-close" data-translate="popup_close">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- Langue Dropdown ---
-            const languageDropdown = document.getElementById('languageDropdown');
-            const dropdownToggle = languageDropdown.querySelector('.dropdown-toggle');
-            const dropdownContent = languageDropdown.querySelector('.dropdown-content');
-            const selectedLanguageSpan = document.getElementById('selectedLanguage');
+            // --- GESTION DU MENU RESPONSIVE ---
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navWrapper = document.querySelector('.navigation-wrapper');
+            const menuIcon = menuToggle.querySelector('i');
 
-            dropdownToggle.addEventListener('click', (e) => {
-                e.stopPropagation(); // Empêche la fermeture immédiate du dropdown
-                languageDropdown.classList.toggle('open');
-                dropdownToggle.setAttribute('aria-expanded', languageDropdown.classList.contains('open'));
-            });
-
-            dropdownContent.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation(); // Empêche la propagation du clic
-                    const lang = e.target.dataset.lang;
-                    selectedLanguageSpan.textContent = e.target.textContent;
-                    // Ici, vous pouvez implémenter la logique pour changer la langue de l'application
-                    // Par exemple, charger des fichiers de traduction ou mettre à jour un attribut data-lang sur le body.
-                    Toastify({
-                        text: `Langue changée en ${e.target.textContent}`,
-                        duration: 3000,
-                        close: true,
-                        gravity: "top", // `top` or `bottom`
-                        position: "right", // `left`, `center` or `right`
-                        stopOnFocus: true, // Prevents dismissing of toast on hover
-                        style: {
-                            background: "linear-gradient(to right, #6c47ff, #a58bff)",
-                        },
-                    }).showToast();
-                    languageDropdown.classList.remove('open');
-                    dropdownToggle.setAttribute('aria-expanded', false);
-                });
-            });
-
-            // Fermer le dropdown si on clique en dehors
-            document.addEventListener('click', (e) => {
-                if (!languageDropdown.contains(e.target)) {
-                    languageDropdown.classList.remove('open');
-                    dropdownToggle.setAttribute('aria-expanded', false);
+            menuToggle.addEventListener('click', () => {
+                navWrapper.classList.toggle('is-open');
+                // Change l'icône de barres à "X" et vice-versa
+                if (navWrapper.classList.contains('is-open')) {
+                    menuIcon.classList.remove('fa-bars');
+                    menuIcon.classList.add('fa-times');
+                } else {
+                    menuIcon.classList.remove('fa-times');
+                    menuIcon.classList.add('fa-bars');
                 }
             });
 
+            // --- GESTION DES FORMULAIRES ---
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            const showRegisterBtn = document.getElementById('show-register');
+            const showLoginBtn = document.getElementById('show-login');
 
-            // --- Slider functionality ---
-            const sliderImages = document.querySelectorAll('.slider-image');
-            const sliderDots = document.querySelectorAll('.slider-dots .dot');
-            let currentIndex = 0;
+            showRegisterBtn.addEventListener('click', (e) => { e.preventDefault(); loginForm.style.display = 'none'; registerForm.style.display = 'block'; });
+            showLoginBtn.addEventListener('click', (e) => { e.preventDefault(); registerForm.style.display = 'none'; loginForm.style.display = 'block'; });
 
-            function showSlide(index) {
-                sliderImages.forEach((img, i) => {
-                    img.classList.remove('active');
-                    sliderDots[i].classList.remove('active');
-                });
-                sliderImages[index].classList.add('active');
-                sliderDots[index].classList.add('active');
-            }
-
-            function nextSlide() {
-                currentIndex = (currentIndex + 1) % sliderImages.length;
-                showSlide(currentIndex);
-            }
-
-            sliderDots.forEach((dot, index) => {
-                dot.addEventListener('click', () => {
-                    currentIndex = index;
-                    showSlide(currentIndex);
-                });
+            // --- GESTION DU THÈME ---
+            const themeToggle = document.getElementById('theme-toggle');
+            themeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-theme');
+                const isDark = document.body.classList.contains('dark-theme');
+                themeToggle.classList.toggle('fa-sun', !isDark);
+                themeToggle.classList.toggle('fa-moon', isDark);
             });
 
-            setInterval(nextSlide, 5000); // Change slide every 5 seconds
+            // --- GESTION DE LA TRADUCTION ---
+            const translations = {
+                fr: { menu_home: "Accueil", menu_about: "À propos", menu_contact: "Contact", main_title: "LA TECHNOLOGIE", main_subtitle: "Au service de l'éducation", main_description: "Une plateforme tout-en-un pour les enseignants : accédez à vos documents scolaires partout, collaborez avec d’autres professeurs et suivez la performance de vos élèves en temps réel.", main_priority: "Professeurs, élèves — vous faciliter la vie, c’est notre priorité.", login_title: "Connexion", form_userid: "Code identifiant", form_email: "Email", form_password: "Mot de passe", login_button: "Se connecter", login_switch_text: "Pas de compte ?", login_switch_link: "Inscrivez-vous", register_title: "Inscription", form_name: "Nom complet", register_button: "Créer un compte", register_switch_text: "Déjà un compte ?", register_switch_link: "Connectez-vous", popup_close: "Fermer", toast_loading: "Traitement en cours...", login_success_title: "Succès", login_success_msg: "Connexion réussie ! Bienvenue.", register_success_msg: "Inscription réussie ! Vous pouvez maintenant vous connecter.", api_error_title: "Erreur", api_error_msg: "Une erreur est survenue. Veuillez réessayer.", forgot_password_link: "Mot de passe oublié ?", reset_password_title: "Réinitialiser le mot de passe", reset_step1_text: "Veuillez saisir votre adresse e-mail pour recevoir un code de vérification.", reset_step1_button: "Envoyer le code", reset_step2_text: "Un code a été envoyé à votre adresse e-mail. Veuillez le saisir ci-dessous.", reset_step2_label: "Code de vérification", reset_step2_button: "Vérifier", reset_step3_text: "Le code est correct. Veuillez définir votre nouveau mot de passe.", form_new_password: "Nouveau mot de passe", form_confirm_password: "Confirmer le mot de passe", reset_step3_button: "Enregistrer", password_mismatch: "Les mots de passe ne correspondent pas.", password_updated: "Votre mot de passe a été mis à jour avec succès.", code_sent: "Code de vérification envoyé !", invalid_code: "Code de vérification invalide.", toggle_menu_label: "Ouvrir le menu" },
+                en: { menu_home: "Home", menu_about: "About", menu_contact: "Contact", main_title: "TECHNOLOGY", main_subtitle: "At the service of education", main_description: "An all-in-one platform for teachers: access your school documents everywhere, collaborate with other teachers, and track your students' performance in real-time.", main_priority: "Teachers, students — making your life easier is our priority.", login_title: "Login", form_userid: "User ID", form_email: "Email", form_password: "Password", login_button: "Log in", login_switch_text: "No account?", login_switch_link: "Sign up", register_title: "Sign Up", form_name: "Full Name", register_button: "Create Account", register_switch_text: "Already have an account?", register_switch_link: "Log in", popup_close: "Close", toast_loading: "Processing...", login_success_title: "Success", login_success_msg: "Login successful! Welcome.", register_success_msg: "Registration successful! You can now log in.", api_error_title: "Error", api_error_msg: "An error occurred. Please try again.", forgot_password_link: "Forgot password?", reset_password_title: "Reset Password", reset_step1_text: "Please enter your email address to receive a verification code.", reset_step1_button: "Send Code", reset_step2_text: "A code has been sent to your email address. Please enter it below.", reset_step2_label: "Verification Code", reset_step2_button: "Verify", reset_step3_text: "The code is correct. Please set your new password.", form_new_password: "New Password", form_confirm_password: "Confirm Password", reset_step3_button: "Save", password_mismatch: "Passwords do not match.", password_updated: "Your password has been updated successfully.", code_sent: "Verification code sent!", invalid_code: "Invalid verification code.", toggle_menu_label: "Open menu" },
+                es: { menu_home: "Inicio", menu_about: "Sobre nosotros", menu_contact: "Contacto", main_title: "TECNOLOGÍA", main_subtitle: "Al servicio de la educación", main_description: "Una plataforma todo en uno para profesores: acceda a sus documentos escolares en todas partes, colabore con otros profesores y siga el rendimiento de sus alumnos en tiempo real.", main_priority: "Profesores, alumnos: facilitarles la vida es nuestra prioridad.", login_title: "Iniciar sesión", form_userid: "Código de identificación", form_email: "Correo electrónico", form_password: "Contraseña", login_button: "Iniciar sesión", login_switch_text: "¿No tiene cuenta?", login_switch_link: "Regístrese", register_title: "Inscripción", form_name: "Nombre completo", register_button: "Crear cuenta", register_switch_text: "¿Ya tiene una cuenta?", register_switch_link: "Inicie sesión", popup_close: "Cerrar", toast_loading: "Procesando...", login_success_title: "Éxito", login_success_msg: "¡Inicio de sesión exitoso! Bienvenido.", register_success_msg: "¡Registro exitoso! Ahora puede iniciar sesión.", api_error_title: "Error", api_error_msg: "Ocurrió un error. Por favor, inténtelo de nuevo.", forgot_password_link: "¿Olvidó su contraseña?", reset_password_title: "Restablecer contraseña", reset_step1_text: "Por favor, ingrese su dirección de correo electrónico para recibir un código de verificación.", reset_step1_button: "Enviar código", reset_step2_text: "Se ha enviado un código a su dirección de correo electrónico. Por favor, ingréselo a continuación.", reset_step2_label: "Código de verificación", reset_step2_button: "Verificar", reset_step3_text: "El código es correcto. Por favor, establezca su nueva contraseña.", form_new_password: "Nueva contraseña", form_confirm_password: "Confirmar contraseña", reset_step3_button: "Guardar", password_mismatch: "Las contraseñas no coinciden.", password_updated: "Su contraseña ha sido actualizada exitosamente.", code_sent: "¡Código de verificación enviado!", invalid_code: "Código de verificación inválido.", toggle_menu_label: "Abrir menú" },
+                de: { menu_home: "Startseite", menu_about: "Über uns", menu_contact: "Kontakt", main_title: "TECHNOLOGIE", main_subtitle: "Im Dienste der Bildung", main_description: "Eine All-in-One-Plattform für Lehrer: Greifen Sie überall auf Ihre Schulunterlagen zu, arbeiten Sie mit anderen Lehrern zusammen und verfolgen Sie die Leistung Ihrer Schüler in Echtzeit.", main_priority: "Lehrer, Schüler – Ihr Leben einfacher zu machen, ist unsere Priorität.", login_title: "Anmeldung", form_userid: "Benutzerkennung", form_email: "E-Mail", form_password: "Passwort", login_button: "Anmelden", login_switch_text: "Kein Konto?", login_switch_link: "Registrieren", register_title: "Registrierung", form_name: "Vollständiger Name", register_button: "Konto erstellen", register_switch_text: "Haben Sie bereits ein Konto?", register_switch_link: "Anmelden", popup_close: "Schließen", toast_loading: "Verarbeitung...", login_success_title: "Erfolg", login_success_msg: "Anmeldung erfolgreich! Willkommen.", register_success_msg: "Registrierung erfolgreich! Sie können sich jetzt anmelden.", api_error_title: "Fehler", api_error_msg: "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.", forgot_password_link: "Passwort vergessen?", reset_password_title: "Passwort zurücksetzen", reset_step1_text: "Bitte geben Sie Ihre E-Mail-Adresse ein, um einen Bestätigungscode zu erhalten.", reset_step1_button: "Code senden", reset_step2_text: "Ein Code wurde an Ihre E-Mail-Adresse gesendet. Bitte geben Sie ihn unten ein.", reset_step2_label: "Bestätigungscode", reset_step2_button: "Überprüfen", reset_step3_text: "Der Code ist korrekt. Bitte legen Sie Ihr neues Passwort fest.", form_new_password: "Neues Passwort", form_confirm_password: "Passwort bestätigen", reset_step3_button: "Speichern", password_mismatch: "Die Passwörter stimmen nicht überein.", password_updated: "Ihr Passwort wurde erfolgreich aktualisiert.", code_sent: "Bestätigungscode gesendet!", invalid_code: "Ungültiger Bestätigungscode.", toggle_menu_label: "Menü öffnen" }
+            };
 
-            showSlide(currentIndex); // Initialize first slide
-
-
-            // --- Password toggle functionality ---
-            document.querySelectorAll('.password-toggle').forEach(toggle => {
-                toggle.addEventListener('click', () => {
-                    const passwordInput = toggle.previousElementSibling; // L'input juste avant l'icône
-                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                    passwordInput.setAttribute('type', type);
-                    toggle.classList.toggle('fa-eye');
-                    toggle.classList.toggle('fa-eye-slash');
-                });
-            });
-
-
-            // --- Toggle Login/Registration Forms ---
-            const registrationFormDiv = document.getElementById('registrationForm');
-            const loginFormDiv = document.getElementById('loginForm');
-            const toggleLinks = document.querySelectorAll('.toggle-link');
-
-            toggleLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const targetForm = e.target.dataset.form; // 'login' or 'register'
-
-                    if (targetForm === 'login') {
-                        registrationFormDiv.classList.add('hidden');
-                        loginFormDiv.classList.remove('hidden');
-                    } else { // targetForm === 'register'
-                        loginFormDiv.classList.add('hidden');
-                        registrationFormDiv.classList.remove('hidden');
+            const languageSelect = document.getElementById('language-select');
+            function changeLanguage(lang) {
+                document.documentElement.lang = lang;
+                document.querySelectorAll('[data-translate]').forEach(el => {
+                    const key = el.getAttribute('data-translate');
+                    if (translations[lang]?.[key]) {
+                        el.textContent = translations[lang][key];
+                    } else if (translations['fr'][key]) { // Fallback en français
+                        el.textContent = translations['fr'][key];
                     }
                 });
-            });
-
-
-            // --- GraphQL Request Utility ---
-            const API_URL = 'https://your-graphql-backend.com/graphql'; // REMPLACEZ PAR VOTRE ENDPOINT GRAPHQL
-
-            async function sendGraphQLRequest(query, variables = {}, token = null) {
-                const headers = {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                };
-                if (token) {
-                    headers['Authorization'] = `Bearer ${token}`;
-                }
-
-                try {
-                    const response = await fetch(API_URL, {
-                        method: 'POST',
-                        headers: headers,
-                        body: JSON.stringify({
-                            query: query,
-                            variables: variables,
-                        }),
-                    });
-
-                    const responseData = await response.json();
-
-                    if (!response.ok || responseData.errors) {
-                        const errorMessage = responseData.errors ? responseData.errors[0].message : `HTTP error! status: ${response.status}`;
-                        throw new Error(errorMessage);
-                    }
-
-                    return responseData.data; // Retourne les données (pas la réponse GraphQL complète)
-
-                } catch (error) {
-                    console.error('GraphQL request failed:', error);
-                    throw error;
-                }
-            }
-
-            // --- Token Management (using localStorage) ---
-            const TOKEN_KEY = 'jwt_session_token';
-
-            function setAuthToken(token) {
-                localStorage.setItem(TOKEN_KEY, token);
-                console.log('Token JWT stocké:', token);
-            }
-
-            function getAuthToken() {
-                return localStorage.getItem(TOKEN_KEY);
-            }
-
-            function removeAuthToken() {
-                localStorage.removeItem(TOKEN_KEY);
-                console.log('Token JWT supprimé.');
-            }
-
-            // --- Form Submission Handlers ---
-            const registerForm = document.getElementById('registerForm');
-            registerForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-
-                const firstName = document.getElementById('regFirstName').value;
-                const lastName = document.getElementById('regLastName').value;
-                const email = document.getElementById('regEmail').value;
-                const password = document.getElementById('regPassword').value;
-                const termsAccepted = document.getElementById('terms').checked;
-
-                if (!termsAccepted) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Conditions requises',
-                        text: 'Veuillez accepter les termes et conditions pour créer un compte.',
-                        confirmButtonColor: varColor('--primary-purple')
-                    });
-                    return;
-                }
-
-                const REGISTER_MUTATION = `
-                    mutation Register($firstName: String!, $lastName: String!, $email: String!, $password: String!) {
-                        registerUser(firstName: $firstName, lastName: $lastName, email: $email, password: $password) {
-                            id
-                            email
-                        }
-                    }
-                `;
-
-                const variables = { firstName, lastName, email, password };
-
-                Swal.fire({
-                    title: 'Inscription en cours...',
-                    text: 'Veuillez patienter',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
+                document.querySelectorAll('[data-translate-aria]').forEach(el => {
+                    const key = el.getAttribute('data-translate-aria');
+                    if (translations[lang]?.[key]) {
+                        el.setAttribute('aria-label', translations[lang][key]);
+                    } else if (translations['fr'][key]) {
+                        el.setAttribute('aria-label', translations['fr'][key]);
                     }
                 });
-
-                try {
-                    // --- Simulation de la réponse du backend pour l'inscription ---
-                    await new Promise(resolve => setTimeout(resolve, 2000));
-                    const data = { registerUser: { id: 'user-123', email: email } }; // Simuler une réponse de succès
-                    // const data = await sendGraphQLRequest(REGISTER_MUTATION, variables); // Décommenter pour un vrai backend
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Inscription réussie!',
-                        text: `Bienvenue, ${firstName}! Votre compte a été créé.`,
-                        confirmButtonColor: varColor('--primary-purple')
-                    });
-
-                    Toastify({
-                        text: "Bienvenue ! Votre compte est créé.",
-                        duration: 5000,
-                        close: true,
-                        gravity: "bottom",
-                        position: "left",
-                        style: {
-                            background: "linear-gradient(to right, #28a745, #218838)",
-                        },
-                    }).showToast();
-
-                    // Basculer vers le formulaire de connexion après l'inscription
-                    registrationFormDiv.classList.add('hidden');
-                    loginFormDiv.classList.remove('hidden');
-
-                } catch (error) {
-                    console.error('Registration failed:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Échec de l\'inscription',
-                        text: error.message || 'Une erreur est survenue lors de l\'inscription. Veuillez réessayer.',
-                        confirmButtonColor: varColor('--primary-purple')
-                    });
-                    Toastify({
-                        text: `Erreur d'inscription: ${error.message}`,
-                        duration: 5000,
-                        close: true,
-                        gravity: "bottom",
-                        position: "left",
-                        backgroundColor: "linear-gradient(to right, #dc3545, #c82333)",
-                    }).showToast();
-                }
-            });
-
-            const loginForm = document.getElementById('loginFormActual');
-            loginForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-
-                const email = document.getElementById('loginEmail').value;
-                const password = document.getElementById('loginPassword').value;
-
-                const LOGIN_MUTATION = `
-                    mutation Login($email: String!, $password: String!) {
-                        loginUser(email: $email, password: $password) {
-                            token
-                            user {
-                                id
-                                email
-                                firstName
-                                lastName
-                            }
-                        }
-                    }
-                `;
-
-                const GET_USER_QUERY = `
-                    query GetCurrentUser {
-                        currentUser {
-                            id
-                            email
-                            firstName
-                            lastName
-                            // Ajoutez d'autres champs que vous souhaitez récupérer
-                        }
-                    }
-                `;
-
-                const variables = { email, password };
-
-                Swal.fire({
-                    title: 'Connexion en cours...',
-                    text: 'Veuillez patienter',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
-
-                try {
-                    // --- Étape 1: Tenter la connexion et récupérer le token ---
-                    // Simuler un délai et une réponse de connexion réussie
-                    await new Promise(resolve => setTimeout(resolve, 1500));
-                    const loginResult = {
-                         loginUser: {
-                            token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1c2VyLTEyMyIsImlhdCI6MTUxNjIzOTAyMn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c', // Token JWT simulé
-                            user: {
-                                id: 'user-123',
-                                email: email,
-                                firstName: 'John',
-                                lastName: 'Doe'
-                            }
-                        }
-                    };
-                    // const loginResult = await sendGraphQLRequest(LOGIN_MUTATION, variables); // Décommenter pour un vrai backend
-
-                    const authToken = loginResult.loginUser.token;
-                    setAuthToken(authToken); // Stocker le token
-
-                    // --- Étape 2: Récupérer les informations de l'utilisateur avec le token ---
-                    await new Promise(resolve => setTimeout(resolve, 1000)); // Petit délai pour la 2ème requête simulée
-                    const userData = { currentUser: loginResult.loginUser.user }; // Utiliser les données de l'utilisateur déjà obtenues
-                    // const userData = await sendGraphQLRequest(GET_USER_QUERY, {}, authToken); // Décommenter pour un vrai backend
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Connexion réussie!',
-                        text: `Bienvenue, ${userData.currentUser.firstName} ${userData.currentUser.lastName}!`,
-                        confirmButtonColor: varColor('--primary-purple')
-                    });
-
-                    Toastify({
-                        text: "Connexion réussie !",
-                        duration: 5000,
-                        close: true,
-                        gravity: "bottom",
-                        position: "left",
-                        style: {
-                            background: "linear-gradient(to right, #28a745, #218838)",
-                        },
-                    }).showToast();
-
-                    // Optionnel: Rediriger l'utilisateur vers une page protégée
-                    // window.location.href = '/dashboard';
-
-                } catch (error) {
-                    console.error('Login failed:', error);
-                    removeAuthToken(); // Supprimer le token en cas d'échec de la connexion
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Échec de la connexion',
-                        text: error.message || 'Email ou mot de passe incorrect. Veuillez réessayer.',
-                        confirmButtonColor: varColor('--primary-purple')
-                    });
-                    Toastify({
-                        text: `Erreur de connexion: ${error.message}`,
-                        duration: 5000,
-                        close: true,
-                        gravity: "bottom",
-                        position: "left",
-                        backgroundColor: "linear-gradient(to right, #dc3545, #c82333)",
-                    }).showToast();
-                }
-            });
-
-            // Fonction utilitaire pour récupérer les variables CSS
-            function varColor(variableName) {
-                return getComputedStyle(document.documentElement).getPropertyValue(variableName);
             }
+            languageSelect.addEventListener('change', (e) => changeLanguage(e.target.value));
+
+            // Le reste du code JavaScript (modales, toasts, API) reste identique...
+            const modal = document.getElementById('popup-modal');
+            const modalHeader = document.getElementById('popup-header');
+            const modalBody = document.getElementById('popup-body');
+            const closeModalBtn = document.getElementById('popup-close');
+            function showPopup(title, message, type = 'success') { modalHeader.textContent = title; modalBody.textContent = message; modalHeader.className = 'modal-header ' + type; modal.style.display = 'flex'; }
+            function hidePopup() { modal.style.display = 'none'; }
+            closeModalBtn.addEventListener('click', hidePopup);
+            modal.addEventListener('click', (e) => { if (e.target === modal) hidePopup(); });
+            const toastContainer = document.getElementById('toast-container');
+            function showToast(message, type = 'info', duration = 3000) { const toast = document.createElement('div'); toast.className = `toast ${type}`; toast.textContent = message; toastContainer.appendChild(toast); setTimeout(() => toast.remove(), duration); }
+            const forgotPasswordLink = document.getElementById('forgot-password-link');
+            const passwordResetModal = document.getElementById('password-reset-modal');
+            const passwordResetCloseBtn = document.getElementById('password-reset-close');
+            const requestCodeStep = document.getElementById('request-code-step');
+            const verifyCodeStep = document.getElementById('verify-code-step');
+            const setNewPasswordStep = document.getElementById('set-new-password-step');
+            forgotPasswordLink.addEventListener('click', (e) => { e.preventDefault(); requestCodeStep.style.display = 'block'; verifyCodeStep.style.display = 'none'; setNewPasswordStep.style.display = 'none'; passwordResetModal.style.display = 'flex'; });
+            function hidePasswordResetModal() { passwordResetModal.style.display = 'none'; }
+            passwordResetCloseBtn.addEventListener('click', hidePasswordResetModal);
+            passwordResetModal.addEventListener('click', (e) => { if (e.target === passwordResetModal) hidePasswordResetModal(); });
+            requestCodeStep.addEventListener('submit', (e) => { e.preventDefault(); showToast(translations[document.documentElement.lang].code_sent, 'success'); requestCodeStep.style.display = 'none'; verifyCodeStep.style.display = 'block'; });
+            verifyCodeStep.addEventListener('submit', (e) => { e.preventDefault(); const code = document.getElementById('verification-code').value; if (code) { verifyCodeStep.style.display = 'none'; setNewPasswordStep.style.display = 'block'; } else { showToast(translations[document.documentElement.lang].invalid_code, 'error'); } });
+            setNewPasswordStep.addEventListener('submit', (e) => { e.preventDefault(); const newPassword = document.getElementById('new-password').value; const confirmPassword = document.getElementById('confirm-password').value; if (newPassword !== confirmPassword) { showToast(translations[document.documentElement.lang].password_mismatch, 'error'); return; } hidePasswordResetModal(); showPopup(translations[document.documentElement.lang].login_success_title, translations[document.documentElement.lang].password_updated, 'success'); });
+            function sendApiRequest(endpoint, data) { return new Promise((resolve, reject) => { setTimeout(() => { const lang = document.documentElement.lang; if (Math.random() < 0.8) { resolve({ message: endpoint === '/login' ? translations[lang].login_success_msg : translations[lang].register_success_msg }); } else { reject({ message: translations[lang].api_error_msg }); } }, 1500); }); }
+            loginForm.addEventListener('submit', async (e) => { e.preventDefault(); const lang = document.documentElement.lang; showToast(translations[lang].toast_loading, 'info'); try { const response = await sendApiRequest('/login', {}); showPopup(translations[lang].login_success_title, response.message, 'success'); loginForm.reset(); } catch (error) { showPopup(translations[lang].api_error_title, error.message, 'error'); } });
+            registerForm.addEventListener('submit', async (e) => { e.preventDefault(); const lang = document.documentElement.lang; showToast(translations[lang].toast_loading, 'info'); try { const response = await sendApiRequest('/register', {}); showPopup(translations[lang].login_success_title, response.message, 'success'); registerForm.reset(); showLoginBtn.click(); } catch (error) { showPopup(translations[lang].api_error_title, error.message, 'error'); } });
+
+            // Initialiser la page
+            changeLanguage('fr');
+            const isDark = document.body.classList.contains('dark-theme');
+            themeToggle.classList.toggle('fa-sun', !isDark);
+            themeToggle.classList.toggle('fa-moon', isDark);
         });
     </script>
+
 </body>
 </html>
