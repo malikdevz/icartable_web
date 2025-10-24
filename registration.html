@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription</title>
+    <!-- Importation de Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Importation de la police Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <style>
+        /* --- Styles Généraux --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #0d1a2e;
+            color: #ffffff;
+        }
+        
+        /* --- En-tête Global --- */
+        #page-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 25px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100; /* Assure qu'il est au-dessus de tout */
+            transition: padding 0.3s ease;
+        }
+
+        .logo { display: flex; align-items: center; font-size: 24px; font-weight: 600; gap: 12px; }
+        .logo img { height: 28px; width: auto; }
+
+        nav { display: flex; align-items: center; }
+        nav a { color: #ffffff; text-decoration: none; margin-left: 30px; font-size: 16px; }
+
+        .menu-icon { display: none; cursor: pointer; margin-left: 30px; }
+        .menu-icon .bar { width: 25px; height: 3px; background-color: #ffffff; margin: 5px 0; }
+
+        /* --- Styles pour le bouton de traduction et le dropdown --- */
+        .language-selector {
+            position: relative;
+            margin-left: 30px;
+        }
+
+        .language-button {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .language-button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            top: 100%; /* Juste en dessous du bouton */
+            right: 0;
+            background-color: #1a2a44;
+            border: 1px solid #3a4b65;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            list-style: none;
+            padding: 10px 0;
+            min-width: 150px;
+            z-index: 110;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+        }
+
+        .language-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .language-dropdown li {
+            padding: 10px 20px;
+            color: #ffffff;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .language-dropdown li:hover {
+            background-color: #0d1a2e;
+        }
+        
+        /* --- Conteneur Principal --- */
+        .main-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* --- Styles pour le Slider Amélioré --- */
+        .image-section {
+            width: 55%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            background-color: #0c182a;
+        }
+        
+        /* Animation "Ken Burns" (zoom lent) */
+        @keyframes kenburns {
+            0% { transform: scale(1.0) translate(0, 0); }
+            100% { transform: scale(1.1) translate(-2%, 1%); }
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+        
+        .slide-background {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .slide.active {
+            opacity: 1;
+        }
+
+        .slide.active .slide-background {
+             animation: kenburns 8s ease-out forwards;
+        }
+        
+        /* Dégradé subtil pour la lisibilité du texte */
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, transparent 50%);
+            z-index: 1;
+        }
+
+        /* VOS IMAGES POUR LE SLIDER */
+        .slide:nth-child(1) .slide-background { background-image: url('img1.png'); }
+        .slide:nth-child(2) .slide-background { background-image: url('img2.png'); }
+        .slide:nth-child(3) .slide-background { background-image: url('img3.png');}
+        /* Animation pour la légende */
+        @keyframes slideUpFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-caption {
+            position: absolute;
+            bottom: 50px;
+            left: 50px;
+            color: #fff;
+            background-color: rgba(15, 25, 45, 0.5); /* Fallback */
+            backdrop-filter: blur(8px); /* Effet verre dépoli */
+            -webkit-backdrop-filter: blur(8px);
+            padding: 20px 30px;
+            border-radius: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: calc(100% - 100px);
+            z-index: 2;
+            opacity: 0; /* Caché par défaut */
+        }
+
+        .slide.active .slide-caption {
+            animation: slideUpFadeIn 1s 0.5s ease-out forwards; /* 0.5s de délai */
+        }
+
+        .slide-caption h2 { font-size: 24px; margin-bottom: 10px; text-shadow: 1px 1px 3px rgba(0,0,0,0.4); }
+        .slide-caption p { font-size: 16px; line-height: 1.5; text-shadow: 1px 1px 3px rgba(0,0,0,0.4); }
+        
+        /* --- Section de Connexion --- */
+        .login-section {
+            width: 45%;
+            height: 100%;
+            background-color: #0d1a2e;
+            padding: 40px 60px;
+            padding-top: 120px; /* Espace pour l'en-tête global */
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .login-form-container {
+            max-width: 400px;
+            width: 100%;
+            margin: auto 0;
+        }
+
+        .login-form-container h2 { font-size: 28px; font-weight: 600; margin-bottom: 30px; }
+
+        .input-group { position: relative; margin-bottom: 20px; }
+        .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #8892b0; }
+        
+        .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #8892b0; }
+        .input-group input {
+            width: 100%; padding: 15px 15px 15px 5px; background-color: transparent;
+            border: 1px solid #3a4b65; border-radius: 8px; color: #ffffff; font-size: 16px;
+        }
+        label{
+            font-size: 13px;
+            color: #fff;
+        }
+        .input-group input,select {
+            width: 100%; padding: 15px 15px 15px 45px; background-color: transparent;
+            border: 1px solid #3a4b65; border-radius: 8px; color:#fff; font-size: 16px;
+        }
+        .input-group input::placeholder { color: #8892b0; }
+        .input-group input:focus { outline: none; border-color: #f7d08a; }
+
+        .options { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; font-size: 14px; }
+        .options label { display: flex; align-items: center; color: #8892b0; cursor: pointer; }
+        .options input[type="checkbox"] { margin-right: 10px; }
+        .options a { color: #8892b0; text-decoration: none; }
+        .options a:hover { text-decoration: underline; }
+
+        .login-btn {
+            width: 100%; padding: 15px; border: none; border-radius: 8px;
+            background: linear-gradient(to right, #f7d08a, #e6b86a);
+            color: #0d1a2e; font-size: 16px; font-weight: 600; cursor: pointer;
+            margin-bottom: 20px; transition: opacity 0.3s ease;
+        }
+        .login-btn:hover { opacity: 0.9; }
+
+        .signup-link { font-size: 14px; color: #8892b0; text-align: center; }
+        .signup-link a { color: #ffffff; text-decoration: underline; }
+
+        /* --- Styles pour les écrans plus petits (Responsive) --- */
+        @media (max-width: 900px) {
+            body { overflow-y: auto; }
+            #page-header { padding: 20px; }
+            .main-container { flex-direction: column; height: auto; }
+            
+            .image-section { width: 100%; height: 50vh; min-height: 300px; }
+            .login-section { width: 100%; height: auto; padding: 40px 20px; padding-top: 40px; }
+            
+            nav { /* Masque les liens de navigation par défaut sur mobile */
+                flex-direction: column;
+                position: absolute;
+                top: 80px; /* Juste en dessous de l'en-tête */
+                right: 20px;
+                background-color: #1a2a44;
+                border-radius: 8px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+                padding: 15px 0;
+                width: 200px;
+                display: none; /* Cache le menu par défaut */
+                align-items: flex-start; /* Aligne les éléments à gauche dans le menu déroulant */
+            }
+
+            nav.show-menu { /* Affiche le menu quand la classe est active */
+                display: flex;
+            }
+            
+            nav a { /* Styles pour les liens de navigation dans le menu mobile */
+                display: block;
+                margin: 10px 20px;
+                width: calc(100% - 40px);
+            }
+
+            .language-selector { /* Styles pour le sélecteur de langue dans le menu mobile */
+                width: calc(100% - 40px);
+                margin: 10px 20px;
+            }
+
+            .language-button {
+                width: 100%; /* S'étend sur toute la largeur du dropdown */
+                text-align: left;
+            }
+
+            .language-dropdown {
+                right: auto; /* Réinitialise le positionnement à droite */
+                left: 0; /* Aligne le dropdown avec le bouton */
+                width: 100%;
+            }
+
+            .menu-icon { display: block; }
+
+            .slide-caption { left: 20px; bottom: 20px; max-width: calc(100% - 40px); text-align: center; }
+            .slide-caption h2 { text-align: center; } /* Centrage du titre de caption sur mobile */
+            .login-form-container h2 { text-align: center; } /* Centrage du titre de connexion sur mobile */
+        }
+        
+        @media (max-width: 480px) {
+            .logo img { height: 24px; }
+            .logo { font-size: 20px; }
+            .login-form-container h2 { font-size: 24px; }
+            .slide-caption h2 { font-size: 20px; }
+            .slide-caption p { font-size: 14px; }
+        }
+
+
+        #pwd-box{
+            cursor: pointer;
+            width: 100%;text-align: right;margin-top: 0px;padding: 0px;font-size: 11px;color:#8892b0;
+        }
+
+        #pwd-box:hover{
+            color: #fff;
+        }
+
+       
+    </style>
+</head>
+<body>
+    <!-- En-tête qui est maintenant global à toute la page -->
+    <header id="page-header">
+        <div class="logo" style="background-color: #fff;padding: 5px;border-radius: 5px;">
+             <!-- REMPLACEZ "VOTRE_LOGO_ICI.png" PAR LE LIEN DE VOTRE LOGO -->
+            <img src="logo.png" alt="Galaero Logo">
+            
+        </div>
+        <nav id="main-nav"> <!-- Ajout d'un ID pour faciliter la sélection en JS -->
+            <a href="#" data-translate="about">About</a>
+            <a href="#" data-translate="news">News</a>
+            <a href="#" data-translate="contactUs">Contact Us</a>
+            <div class="language-selector">
+                <button class="language-button" id="language-button">
+                    <i class="fas fa-globe"></i> <span id="current-language-display">FR</span>
+                </button>
+                <ul class="language-dropdown" id="language-dropdown">
+                    <li data-lang="fr">Français</li>
+                    <li data-lang="en">English</li>
+                    <li data-lang="es">Español</li>
+                    <li data-lang="de">Deutsch</li>
+                </ul>
+            </div>
+        </nav>
+        <div class="menu-icon" id="menu-toggle"> <!-- Ajout d'un ID pour le bouton burger -->
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+    </header>
+
+    <div class="main-container">
+
+        <!-- Section Slider d'images -->
+        <div class="image-section">
+            <div class="slide active">
+                <div class="slide-background"></div>
+                <div class="slide-caption">
+                    <h1 data-translate="iclaseTitle">iClasse</h1>
+                    <p data-translate="iclaseDesc">Gestion automatise de vos salle de classe, evaluation et suivie des performances de vos eleves,
+                        Exportez vos resultats.
+                    </p>
+                </div>
+            </div>
+            <div class="slide">
+                <div class="slide-background"></div>
+                 <div class="slide-caption">
+                    <h2 data-translate="ieditorTitle">iEditor</h2>
+                    <p data-translate="ieditorDesc">Creer des document scolaire, editer vos note de cours, ou contribuer a l'elaboration 
+                        d'un livre de cours grace a notre system d'edition collaboratif pour professeur
+                    </p>
+                </div>
+            </div>
+             <div class="slide">
+                <div class="slide-background"></div>
+                <div class="slide-caption">
+                    <h2 data-translate="idocsTitle">iDocs</h2>
+                    <p data-translate="idocsDesc">Acceder a une banque de document, dans different domaine pour facilite vos tache 
+                        d'enseignement, ecrivez et partager vos propre documents dans un reseau de professeurs 
+                        partout au monde.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Formulaire de connexion -->
+        <div class="login-section">
+            <div class="login-form-container">
+    <h2 data-translate="registerTitle">Créer un compte</h2>
+    <form id="registrationForm">
+        <div class="input-group">
+            <label data-translate="firstNameLabel">Prénom</label>
+            <input type="text" name="first_name" id="first_name" placeholder="Prénom" required data-translate-placeholder="firstNamePlaceholder">
+        </div>
+        <div class="input-group">
+            <label data-translate="accountTypeLabel">Type de compte</label>
+            <select name="role" id="role" required>
+                <option value="STUDENT">Élève</option>
+                <option value="TEACHER">Professeur</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label data-translate="sexLabel">Sexe</label>
+            <select name="sex" id="sex" required>
+                <option value="M">Homme</option>
+                <option value="F">Femme</option>
+                <option value="Not.Binary">Non Binaire</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label data-translate="dobLabel">Date de naissance</label>
+            <input type="date" name="date_of_birth" id="date_of_birth" required>
+        </div>
+
+        <!-- Champs spécifiques aux professeurs (initialement cachés) -->
+        <div id="teacher-fields" style="display: none;">
+            <div class="input-group">
+                <label data-translate="emailLabel">Email</label>
+                <input type="email" name="email" id="email" placeholder="adresse@email.com" data-translate-placeholder="emailPlaceholder">
+            </div>
+            <div class="input-group">
+                <label data-translate="phoneLabel">Téléphone</label>
+                <input type="tel" name="phone" id="phone" placeholder="+123456789" data-translate-placeholder="phonePlaceholder">
+            </div>
+            <div class="input-group">
+                <label data-translate="cityLabel">Ville</label>
+                <input type="text" name="city" id="city" placeholder="Votre ville" data-translate-placeholder="cityPlaceholder">
+            </div>
+            <div class="input-group">
+                <label data-translate="countryLabel">Pays</label>
+                <input type="text" name="country" id="country" placeholder="Votre pays" data-translate-placeholder="countryPlaceholder">
+            </div>
+        </div>
+        <!-- Fin des champs spécifiques -->
+
+        <div id="pwd-box">
+            <i class="fas fa-eye-slash"></i> <span class="toggle-show-pwd">Afficher/Cacher</span>
+        </div>
+        <div class="input-group">
+            <label data-translate="passwordLabel">Mot de passe</label>
+            <i class="fas fa-lock"></i>
+            <input type="password" name="password" id="password" placeholder="Mot de passe" required data-translate-placeholder="passwordPlaceholder">
+        </div>
+        <div class="input-group">
+            <label data-translate="confirmPasswordLabel">Confirmer le mot de passe</label>
+            <i class="fas fa-lock"></i>
+            <input type="password" name="password_confirm" id="password_confirm" placeholder="Confirmez le mot de passe" required data-translate-placeholder="confirmPasswordPlaceholder">
+        </div>
+
+        <button type="submit" class="login-btn" data-translate="registerButton">INSCRIPTION</button>
+    </form>
+    <p class="signup-link">
+        <span data-translate="hasAccount">Vous avez déjà un compte ?</span> <a href="#" data-translate="signInHere">Se connecter</a>
+    </p>
+</div>
+        </div>
+
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script>
+    toastr.options = {
+        "closeButton": true,
+        "progressBar": true,
+        "positionClass": "toast-top-right",
+        "timeOut": "5000",
+    };
+
+    async function registerUser(variables, graphqlEndpointUrl) {
+        // ... (La fonction registerUser reste exactement la même que dans la réponse précédente)
+        const mutation = `
+            mutation CreateAccount(
+                $firstName: String!, $sex: String!, $dateOfBirth: Date!, $password: String!, $role: String!,
+                $email: String, $city: String, $country: String, $phone: String
+            ) {
+                createAccount(
+                    firstName: $firstName, sex: $sex, dateOfBirth: $dateOfBirth, password: $password, role: $role,
+                    email: $email, city: $city, country: $country, phone: $phone
+                ) {
+                    account {
+                        id
+                        userIdentifier
+                        firstName
+                    }
+                }
+            }
+        `;
+
+        try {
+            const response = await axios.post(graphqlEndpointUrl, {
+                query: mutation,
+                variables: variables,
+            }, {
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            if (response.data.errors) {
+                const errorMessages = {
+                    "EMAIL_ALREAD_TEKEN": "Cette adresse e-mail est déjà utilisée.",
+                    "EMAIL_REQUIRED": "Une adresse e-mail est requise pour un compte professeur.",
+                    "PHONE_REQUIRED": "Un numéro de téléphone est requis pour un compte professeur.",
+                    "CITY_REQUIRED": "Une ville est requise pour un compte professeur.",
+                    "COUNTRY_REQUIRED": "Un pays est requis pour un compte professeur."
+                };
+                response.data.errors.forEach(err => {
+                    const userFriendlyMessage = errorMessages[err.message] || err.message;
+                    toastr.error(userFriendlyMessage);
+                });
+                return null;
+            }
+
+            const accountData = response.data.data.createAccount.account;
+            if (accountData) {
+                toastr.success(`Inscription réussie ! Votre identifiant est : ${accountData.userIdentifier}`);
+                return accountData;
+            } else {
+                toastr.error("Une erreur inconnue est survenue lors de l'inscription.");
+                return null;
+            }
+
+        } catch (error) {
+            console.error('Erreur de requête:', error);
+            toastr.error('Erreur réseau ou serveur. Impossible de contacter le service d\'inscription.');
+            return null;
+        }
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+        setInterval(() => {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }, 6000);
+
+        // --- GESTION DES TRADUCTIONS ---
+        const languageButton = document.getElementById('language-button');
+        const languageDropdown = document.getElementById('language-dropdown');
+        const currentLanguageDisplay = document.getElementById('current-language-display');
+
+        // CORRIGÉ : L'objet translations est maintenant complet pour les 4 langues.
+        const translations = {
+            fr: {
+                about: "À propos", news: "Actualités", contactUs: "Nous contacter",
+                iclaseTitle: "iClasse", iclaseDesc: "Gestion automatisée de vos salles de classe, évaluation et suivi des performances de vos élèves, exportez vos résultats.",
+                ieditorTitle: "iEditor", ieditorDesc: "Créez des documents scolaires, éditez vos notes de cours, ou contribuez à l'élaboration d'un livre de cours grâce à notre système d'édition collaboratif pour professeurs.",
+                idocsTitle: "iDocs", idocsDesc: "Accédez à une banque de documents, dans différents domaines pour faciliter vos tâches d'enseignement, écrivez et partagez vos propres documents dans un réseau de professeurs partout au monde.",
+                registerTitle: "Créer un compte",
+                firstNameLabel: "Prénom", firstNamePlaceholder: "Votre prénom",
+                accountTypeLabel: "Type de compte",
+                sexLabel: "Sexe", dobLabel: "Date de naissance",
+                emailLabel: "Email", emailPlaceholder: "adresse@email.com",
+                phoneLabel: "Téléphone", phonePlaceholder: "+123456789",
+                cityLabel: "Ville", cityPlaceholder: "Votre ville",
+                countryLabel: "Pays", countryPlaceholder: "Votre pays",
+                passwordLabel: "Mot de passe", passwordPlaceholder: "Mot de passe",
+                confirmPasswordLabel: "Confirmer le mot de passe", confirmPasswordPlaceholder: "Confirmez le mot de passe",
+                registerButton: "INSCRIPTION",
+                hasAccount: "Vous avez déjà un compte ?", signInHere: "Se connecter ici"
+            },
+            en: {
+                about: "About", news: "News", contactUs: "Contact Us",
+                iclaseTitle: "iClass", iclaseDesc: "Automated management of your classrooms, evaluation and performance tracking of your students, export your results.",
+                ieditorTitle: "iEditor", ieditorDesc: "Create school documents, edit your course notes, or contribute to the development of a course book thanks to our collaborative editing system for teachers.",
+                idocsTitle: "iDocs", idocsDesc: "Access a document bank, in different fields to facilitate your teaching tasks, write and share your own documents within a network of teachers worldwide.",
+                registerTitle: "Create Account",
+                firstNameLabel: "First Name", firstNamePlaceholder: "Your first name",
+                accountTypeLabel: "Account Type",
+                sexLabel: "Sex", dobLabel: "Date of Birth",
+                emailLabel: "Email", emailPlaceholder: "name@email.com",
+                phoneLabel: "Phone", phonePlaceholder: "+123456789",
+                cityLabel: "City", cityPlaceholder: "Your city",
+                countryLabel: "Country", countryPlaceholder: "Your country",
+                passwordLabel: "Password", passwordPlaceholder: "Password",
+                confirmPasswordLabel: "Confirm Password", confirmPasswordPlaceholder: "Confirm the password",
+                registerButton: "SIGN UP",
+                hasAccount: "Already have an account?", signInHere: "Sign in here"
+            },
+            es: {
+                about: "Acerca de", news: "Noticias", contactUs: "Contáctenos",
+                iclaseTitle: "iClase", iclaseDesc: "Gestión automatizada de sus aulas, evaluación y seguimiento del rendimiento de sus alumnos, exporte sus resultados.",
+                ieditorTitle: "iEditor", ieditorDesc: "Cree documentos escolares, edite sus apuntes de clase o contribuya a la elaboración de un libro de texto gracias a nuestro sistema de edición colaborativa para profesores.",
+                idocsTitle: "iDocs", idocsDesc: "Acceda a un banco de documentos, en diferentes áreas para facilitar sus tareas de enseñanza, escriba y comparta sus propios documentos en una red de profesores de todo el mundo.",
+                registerTitle: "Crear una cuenta",
+                firstNameLabel: "Nombre", firstNamePlaceholder: "Tu nombre",
+                accountTypeLabel: "Tipo de cuenta",
+                sexLabel: "Sexo", dobLabel: "Fecha de nacimiento",
+                emailLabel: "Correo electrónico", emailPlaceholder: "nombre@email.com",
+                phoneLabel: "Teléfono", phonePlaceholder: "+123456789",
+                cityLabel: "Ciudad", cityPlaceholder: "Tu ciudad",
+                countryLabel: "País", countryPlaceholder: "Tu país",
+                passwordLabel: "Contraseña", passwordPlaceholder: "Contraseña",
+                confirmPasswordLabel: "Confirmar contraseña", confirmPasswordPlaceholder: "Confirma la contraseña",
+                registerButton: "REGISTRARSE",
+                hasAccount: "¿Ya tienes una cuenta?", signInHere: "Iniciar sesión aquí"
+            },
+            de: {
+                about: "Über uns", news: "Neuigkeiten", contactUs: "Kontakt",
+                iclaseTitle: "iKlasse", iclaseDesc: "Automatisierte Verwaltung Ihrer Klassenzimmer, Bewertung und Leistungsverfolgung Ihrer Schüler, exportieren Sie Ihre Ergebnisse.",
+                ieditorTitle: "iEditor", ieditorDesc: "Erstellen Sie Schuldokumente, bearbeiten Sie Ihre Kursnotizen oder tragen Sie zur Entwicklung eines Kursbuches dank unseres kollaborativen Redaktionssystems für Lehrer bei.",
+                idocsTitle: "iDocs", idocsDesc: "Greifen Sie auf eine Dokumentenbank in verschiedenen Bereichen zu, um Ihre Lehraufgaben zu erleichtern, schreiben und teilen Sie Ihre eigenen Dokumente in einem weltweiten Netzwerk von Lehrern.",
+                registerTitle: "Konto erstellen",
+                firstNameLabel: "Vorname", firstNamePlaceholder: "Ihr Vorname",
+                accountTypeLabel: "Kontotyp",
+                sexLabel: "Geschlecht", dobLabel: "Geburtsdatum",
+                emailLabel: "E-Mail", emailPlaceholder: "name@email.com",
+                phoneLabel: "Telefon", phonePlaceholder: "+123456789",
+                cityLabel: "Stadt", cityPlaceholder: "Ihre Stadt",
+                countryLabel: "Land", countryPlaceholder: "Ihr Land",
+                passwordLabel: "Passwort", passwordPlaceholder: "Passwort",
+                confirmPasswordLabel: "Passwort bestätigen", confirmPasswordPlaceholder: "Bestätigen Sie das Passwort",
+                registerButton: "REGISTRIEREN",
+                hasAccount: "Haben Sie bereits ein Konto?", signInHere: "Hier anmelden"
+            }
+        };
+
+        function setLanguage(lang) {
+            document.documentElement.lang = lang;
+            currentLanguageDisplay.textContent = lang.toUpperCase();
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            document.querySelectorAll('[data-translate-placeholder]').forEach(element => {
+                const key = element.getAttribute('data-translate-placeholder');
+                if (translations[lang] && translations[lang][key]) {
+                    element.placeholder = translations[lang][key];
+                }
+            });
+        }
+        
+        languageButton.addEventListener('click', (event) => {
+            languageDropdown.classList.toggle('show');
+            event.stopPropagation();
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!languageDropdown.contains(event.target) && !languageButton.contains(event.target)) {
+                languageDropdown.classList.remove('show');
+            }
+        });
+
+        languageDropdown.querySelectorAll('li').forEach(item => {
+            item.addEventListener('click', function() {
+                setLanguage(this.getAttribute('data-lang'));
+                languageDropdown.classList.remove('show');
+            });
+        });
+
+        const userLang = navigator.language.split('-')[0] || 'fr';
+        setLanguage(userLang in translations ? userLang : 'fr');
+
+        // Mobile Menu Toggle
+        const menuToggle = document.getElementById('menu-toggle');
+        const mainNav = document.getElementById('main-nav');
+        menuToggle.addEventListener('click', () => mainNav.classList.toggle('show-menu'));
+        document.addEventListener('click', (event) => {
+            if (mainNav.classList.contains('show-menu') && !mainNav.contains(event.target) && !menuToggle.contains(event.target)) {
+                mainNav.classList.remove('show-menu');
+            }
+        });
+
+        // --- GESTION DU FORMULAIRE D'INSCRIPTION ---
+
+        const roleSelect = document.getElementById('role');
+        const teacherFields = document.getElementById('teacher-fields');
+        roleSelect.addEventListener('change', function() {
+            teacherFields.style.display = this.value === 'TEACHER' ? 'block' : 'none';
+        });
+
+        const pwd_box = document.querySelector("#pwd-box");
+        pwd_box.addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const confirmInput = document.getElementById('password_confirm');
+            const icon = pwd_box.querySelector('i');
+            const newType = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = newType;
+            confirmInput.type = newType;
+            icon.classList.toggle('fa-eye-slash');
+            icon.classList.toggle('fa-eye');
+        });
+
+        document.getElementById('registrationForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const password = document.getElementById('password').value;
+            const passwordConfirm = document.getElementById('password_confirm').value;
+
+            if (password !== passwordConfirm) {
+                toastr.error("Les mots de passe ne correspondent pas !");
+                return;
+            }
+
+            const variables = {
+                firstName: document.getElementById('first_name').value,
+                sex: document.getElementById('sex').value,
+                dateOfBirth: document.getElementById('date_of_birth').value,
+                password: password,
+                role: document.getElementById('role').value,
+                email: document.getElementById('email').value || null,
+                city: document.getElementById('city').value || null,
+                country: document.getElementById('country').value || null,
+                phone: document.getElementById('phone').value || null,
+            };
+
+            const graphqlEndpoint = 'http://users.icartable.net/user_accounts/api/';
+            
+            const result = await registerUser(variables, graphqlEndpoint);
+
+            if (result) {
+                document.getElementById('registrationForm').reset();
+                teacherFields.style.display = 'none';
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

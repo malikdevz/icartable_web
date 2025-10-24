@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Importation de la police Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <style>
         /* --- Styles Généraux --- */
         * {
@@ -217,6 +218,8 @@
 
         .input-group { position: relative; margin-bottom: 20px; }
         .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #8892b0; }
+        
+        .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #8892b0; }
         .input-group input {
             width: 100%; padding: 15px 15px 15px 45px; background-color: transparent;
             border: 1px solid #3a4b65; border-radius: 8px; color: #ffffff; font-size: 16px;
@@ -304,6 +307,18 @@
             .slide-caption h2 { font-size: 20px; }
             .slide-caption p { font-size: 14px; }
         }
+
+
+        #pwd-box{
+            cursor: pointer;
+            width: 100%;text-align: right;margin-top: 0px;padding: 0px;font-size: 11px;color:#8892b0;
+        }
+
+        #pwd-box:hover{
+            color: #fff;
+        }
+
+       
     </style>
 </head>
 <body>
@@ -375,18 +390,21 @@
         <div class="login-section">
             <div class="login-form-container">
                 <h2 data-translate="loginTitle">Se connecter</h2>
-                <form>
+                <form id="loginForm"> 
                     <div class="input-group">
                         <i class="fas fa-user"></i>
-                        <input type="text" placeholder="Username" required data-translate-placeholder="usernamePlaceholder">
+                        <input type="text" name="username" placeholder="Username" id="username" required data-translate-placeholder="usernamePlaceholder">
                     </div>
+                    <div id="pwd-box">
+                            <i class="fas fa-eye-slash"></i> <span class="toggle-show-pwd">Afficher/Cacher</span>
+                        </div>
                     <div class="input-group">
                         <i class="fas fa-lock"></i>
-                        <input type="password" placeholder="Password" required data-translate-placeholder="passwordPlaceholder">
+                        <input type="password" name="password" placeholder="Password" id="password" required data-translate-placeholder="passwordPlaceholder">
                     </div>
                     <div class="options">
                         <label>
-                            <input type="checkbox">
+                            <input type="checkbox" id="rememberMe-box">
                             <span data-translate="rememberMe">Remember me</span>
                         </label>
                         <a href="#" data-translate="forgotPassword">Forgot password?</a>
@@ -394,15 +412,119 @@
                     <button type="submit" class="login-btn" data-translate="loginButton">LOG IN</button>
                 </form>
                 <p class="signup-link">
-                    <span data-translate="noAccount">Don't have an account?</span> <a href="#" data-translate="signUpHere">Sign up here</a>
+                    <span data-translate="noAccount">Don't have an account?</span> <a href="registration.html" data-translate="signUpHere">Sign up here</a>
                 </p>
             </div>
         </div>
 
     </div>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+
+        async function loginToGraphene(username, password, graphqlEndpointUrl) {
+            const query = `
+                mutation TokenAuth($username: String!, $password: String!) {
+                    tokenAuth(username: $username, password: $password) {
+                        token
+                        refreshToken
+                        payload
+                    }
+                }
+            `;
+
+            try {
+                const response = await axios.post(graphqlEndpointUrl, {
+                    query: query,
+                    variables: {
+                        username: username,
+                        password: password,
+                    },
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                console.log(response)
+
+                const authData = response.data.data.tokenAuth;
+
+                if (authData && authData.token && authData.refreshToken) {
+                    console.log(authData)
+                    toastr.success('Connexion réussie !');
+                    return {
+                        token: authData.token,
+                        refreshToken: authData.refreshToken,
+                        username:authData.payload.username
+                    };
+                } else {
+                    // Si l'API renvoie des erreurs GraphQL au lieu de tokenAuth
+                    if (response.data.errors && response.data.errors.length > 0) {
+                        const errorMessage = response.data.errors.map(err => err.message).join('; ');
+                        if(errorMessage.includes("Please enter valid credentials")){
+                           toastr.error(`Votre identifiant ou password incorrect, veuillz reeassyez`); 
+                        }else{
+                            toastr.error(`${errorMessage}`);
+                        }
+                        
+                    } else {
+                        toastr.error('Oops! something wrong, that all we know!');
+                    }
+                    return null;
+                }
+
+            } catch (error) {
+                if (error.response) {
+                    // L'API a répondu avec un code d'erreur HTTP (ex: 400, 401)
+                    // GraphQL renvoie souvent 200 OK même en cas d'erreur logique, mais si c'est une erreur HTTP
+                    toastr.error(`Erreur réseau HTTP: ${error.response.status} - ${error.response.statusText}`);
+                    console.error('Erreur de réponse de l\'API:', error.response);
+                } else if (error.request) {
+                    // La requête a été faite mais aucune réponse n'a été reçue (ex: problème réseau)
+                    toastr.error('Erreur réseau : Impossible de contacter le serveur.');
+                    console.error('Erreur de requête:', error.request);
+                } else {
+                    // Quelque chose s'est passé lors de la configuration de la requête
+                    toastr.error(`Erreur inattendue : ${error.message}`);
+                    console.error('Erreur JavaScript:', error.message);
+                }
+                return null;
+            }
+        }
         document.addEventListener('DOMContentLoaded', function() {
+            if(localStorage.getItem("user_identifiant")){
+                document.querySelector("#username").value=localStorage.getItem("user_identifiant");
+            }
+            //gestion de l'oeil de visibilite mot de passe
+            const pwd_box =document.querySelector("#pwd-box");
+            pwd_box.addEventListener('click', function() {
+                    if (document.querySelector("#password").type === 'password') {
+                        document.querySelector("#password").type = 'text';
+                        pwd_box.querySelector('i').classList.remove('fa-eye-slash');
+                        pwd_box.querySelector('i').classList.add('fa-eye'); // Oeil barré
+                    } else {
+                        document.querySelector("#password").type = 'password';
+                        pwd_box.querySelector('i').classList.remove('fa-eye');
+                        pwd_box.querySelector('i').classList.add('fa-eye-slash'); // Oeil ouvert
+                    }
+                });
+            //--------------------------------------------------------------
+
             // Slider functionality
             const slides = document.querySelectorAll('.slide');
             let currentSlide = 0;
@@ -433,7 +555,7 @@
                     idocsTitle: "iDocs",
                     idocsDesc: "Accédez à une banque de documents, dans différents domaines pour faciliter vos tâches d'enseignement, écrivez et partagez vos propres documents dans un réseau de professeurs partout au monde.",
                     loginTitle: "Se connecter",
-                    usernamePlaceholder: "Nom d'utilisateur",
+                    usernamePlaceholder: "Code Identifiant",
                     passwordPlaceholder: "Mot de passe",
                     rememberMe: "Se souvenir de moi",
                     forgotPassword: "Mot de passe oublié ?",
@@ -452,7 +574,7 @@
                     idocsTitle: "iDocs",
                     idocsDesc: "Access a document bank, in different fields to facilitate your teaching tasks, write and share your own documents within a network of teachers worldwide.",
                     loginTitle: "Log In",
-                    usernamePlaceholder: "Username",
+                    usernamePlaceholder: "Your ID code",
                     passwordPlaceholder: "Password",
                     rememberMe: "Remember me",
                     forgotPassword: "Forgot password?",
@@ -471,7 +593,7 @@
                     idocsTitle: "iDocs",
                     idocsDesc: "Acceda a un banco de documentos, en diferentes áreas para facilitar sus tareas de enseñanza, escriba y comparta sus propios documentos en una red de profesores de todo el mundo.",
                     loginTitle: "Iniciar sesión",
-                    usernamePlaceholder: "Nombre de usuario",
+                    usernamePlaceholder: "Your ID code",
                     passwordPlaceholder: "Contraseña",
                     rememberMe: "Recordarme",
                     forgotPassword: "¿Olvidó su contraseña?",
@@ -490,7 +612,7 @@
                     idocsTitle: "iDocs",
                     idocsDesc: "Greifen Sie auf eine Dokumentenbank in verschiedenen Bereichen zu, um Ihre Lehraufgaben zu erleichtern, schreiben und teilen Sie Ihre eigenen Dokumente in einem weltweiten Netzwerk von Lehrern.",
                     loginTitle: "Anmelden",
-                    usernamePlaceholder: "Benutzername",
+                    usernamePlaceholder: "Your ID code",
                     passwordPlaceholder: "Passwort",
                     rememberMe: "Angemeldet bleiben",
                     forgotPassword: "Passwort vergessen?",
@@ -566,6 +688,30 @@
                     mainNav.classList.remove('show-menu');
                 }
             });
+        });
+         // --- Gérer la soumission du formulaire ---
+        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Empêche le rechargement de la page
+
+            const usernameInput = document.getElementById('username').value;
+            const passwordInput = document.getElementById('password').value;
+            const graphqlEndpoint = 'http://users.icartable.net/user_accounts/api/'; // REMPLACEZ PAR L'URL RÉELLE DE VOTRE ENDPOINT GRAPHQL !
+
+            const authData = await loginToGraphene(usernameInput, passwordInput, graphqlEndpoint);
+
+            if (authData) {
+                console.log('Tokens reçus :', authData);
+                // Stockez les tokens (par exemple dans le localStorage)
+                localStorage.setItem('authToken', authData.token);
+                localStorage.setItem('refreshToken', authData.refreshToken);
+                localStorage.setItem("user_identifiant", authData.username);
+                setTimeout(()=>{window.location="dashboard.html"},3000)
+                //toastr.info('Tokens stockés dans le localStorage (F12 > Application > Local Storage)');
+            } else {
+                console.log('Échec de la connexion.');
+                apiResponsePre.textContent = 'Échec de la connexion. Vérifiez les identifiants ou l\'URL de l\'API.';
+                responseContainer.classList.add('error');
+            }
         });
     </script>
 
