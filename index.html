@@ -3,502 +3,569 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICARTABLE</title>
-    <!-- Ajout de Font Awesome pour les icônes -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Galaero - Connexion</title>
+    <!-- Importation de Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Importation de la police Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* --- Importation de la police --- */
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
-
-        /* --- Variables de couleur pour le thème --- */
-        :root {
-            /* Thème Clair (Bleu clair et Blanc) */
-            --bg-color-light: #ffffff;
-            --banner-bg-light: #ffffff;
-            --text-color-light: #2c3e50; /* Texte sombre pour lisibilité */
-            --text-secondary-light: #7f8c8d;
-            --accent-color: #3498db; /* Bleu clair */
-            --gradient-start: #3498db;
-            --gradient-end: #2980b9;
-            --form-bg-light: rgba(255, 255, 255, 0.1);
-            --form-border-light: rgba(255, 255, 255, 0.3);
-
-            /* Thème Sombre */
-            --bg-color-dark: #121212;
-            --banner-bg-dark: #1a1a2e;
-            --text-color-dark: #e0e0e0;
-            --text-secondary-dark: #a0a0a0;
-            --form-bg-dark: rgba(0, 0, 0, 0.2);
-            --form-border-dark: rgba(255, 255, 255, 0.2);
-
-            /* Couleurs communes */
-            --success-color: #28a745;
-            --error-color: #dc3545;
-        }
-
-        /* --- Styles de base --- */
-        body {
+        /* --- Styles Généraux --- */
+        * {
             margin: 0;
-            font-family: 'Montserrat', sans-serif;
-            background-color: var(--bg-color-light);
-            color: var(--text-color-light);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
             padding: 0;
             box-sizing: border-box;
-            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        body.dark-theme {
-            background-color: var(--bg-color-dark);
-            color: var(--text-color-dark);
+        html, body {
+            height: 100%;
         }
 
-        .banner {
-            margin: 0;
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #0d1a2e;
+            color: #ffffff;
+        }
+        
+        /* --- En-tête Global --- */
+        #page-header {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            display: flex;
-            position: relative;
-            background: var(--banner-bg-light);
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            min-height: 100vh;
-            transition: background-color 0.3s ease;
-        }
-
-        body.dark-theme .banner {
-            background: var(--banner-bg-dark);
-        }
-
-        .info-section {
-            width: 55%;
-            padding: 20px 60px;
-            box-sizing: border-box;
-            color: var(--text-color-light);
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-        }
-        body.dark-theme .info-section {
-            color: var(--text-color-dark);
-        }
-
-        .main-header {
+            padding: 25px 60px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            width: 100%;
-            padding: 15px 0;
-            margin-bottom: 30px;
+            z-index: 100; /* Assure qu'il est au-dessus de tout */
+            transition: padding 0.3s ease;
         }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            font-weight: 700;
-            font-size: 1.2rem;
-            z-index: 10;
+        .logo { display: flex; align-items: center; font-size: 24px; font-weight: 600; gap: 12px; }
+        .logo img { height: 28px; width: auto; }
+
+        nav { display: flex; align-items: center; }
+        nav a { color: #ffffff; text-decoration: none; margin-left: 30px; font-size: 16px; }
+
+        .menu-icon { display: none; cursor: pointer; margin-left: 30px; }
+        .menu-icon .bar { width: 25px; height: 3px; background-color: #ffffff; margin: 5px 0; }
+
+        /* --- Styles pour le bouton de traduction et le dropdown --- */
+        .language-selector {
+            position: relative;
+            margin-left: 30px;
         }
 
-        .logo-icon {
-            width: 50%;
-            margin-right: 12px;
-        }
-
-        .navigation-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 25px;
-        }
-
-        nav ul { margin: 0; padding: 0; list-style: none; display: flex; gap: 25px; }
-        nav a { color: var(--text-color-light); text-decoration: none; font-weight: 700; font-size: 0.9rem; transition: color 0.2s; }
-        body.dark-theme nav a { color: var(--text-color-dark); }
-        nav a:hover { color: var(--accent-color); }
-
-        .controls { display: flex; align-items: center; gap: 20px; }
-
-        #language-select {
-            background: none;
-            border: 1px solid var(--text-color-light);
-            color: var(--text-color-light);
-            cursor: pointer;
-            padding: 5px 8px;
-            border-radius: 4px;
-            font-family: 'Montserrat', sans-serif;
-            transition: background-color 0.2s, color 0.2s, border-color 0.2s;
-        }
-        #language-select option { background-color: var(--banner-bg-light); color: black; }
-        body.dark-theme #language-select option { background-color: var(--banner-bg-dark); color: white; }
-        body.dark-theme #language-select { border-color: var(--text-color-dark); color: var(--text-color-dark); }
-        #language-select:hover { background-color: var(--accent-color); border-color: var(--accent-color); color: white; }
-
-        #theme-toggle {
-            cursor: pointer;
-            font-size: 1.2rem;
-            color: var(--text-color-light);
-            transition: color 0.2s, transform 0.3s;
-        }
-        body.dark-theme #theme-toggle { color: var(--text-color-dark); }
-        #theme-toggle:hover { color: var(--accent-color); transform: scale(1.1); }
-
-        .menu-toggle {
-            display: none;
+        .language-button {
             background: none;
             border: none;
-            font-size: 1.5rem;
+            color: #ffffff;
+            font-size: 16px;
             cursor: pointer;
-            color: var(--text-color-light);
-            z-index: 1001;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
         }
-        body.dark-theme .menu-toggle { color: var(--text-color-dark); }
 
-        .main-content { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
-        .title { font-size: 2rem; font-weight: 400; color: var(--accent-color); margin: 0; letter-spacing: 1px; }
-        .subtitle { font-size: 3.5rem; font-weight: 800; margin: 0 0 20px 0; line-height: 1.1; }
-        .description { font-size: 0.9rem; color: var(--text-secondary-light); line-height: 1.6; max-width: 400px; margin-bottom: 40px; }
-        body.dark-theme .description { color: var(--text-secondary-dark); }
-        .contact-details { display: flex; align-items: center; flex-wrap: wrap; gap: 25px; font-size: 0.9rem; }
-        .contact-item { display: flex; align-items: center; }
-        .contact-item .icon { width: 20px; height: 20px; border-radius: 50%; background: var(--accent-color); margin-right: 10px; }
+        .language-button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
 
-        .auth-section {
-            width: 45%;
-            position: relative;
+        .language-dropdown {
+            position: absolute;
+            top: 100%; /* Juste en dessous du bouton */
+            right: 0;
+            background-color: #1a2a44;
+            border: 1px solid #3a4b65;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            list-style: none;
+            padding: 10px 0;
+            min-width: 150px;
+            z-index: 110;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+        }
+
+        .language-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .language-dropdown li {
+            padding: 10px 20px;
+            color: #ffffff;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .language-dropdown li:hover {
+            background-color: #0d1a2e;
+        }
+        
+        /* --- Conteneur Principal --- */
+        .main-container {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            background-image: linear-gradient(to right, rgba(0, 114, 255, 0.4), rgba(0, 198, 255, 0.5)), url(img2.png);
+            width: 100%;
+            height: 100%;
+        }
+
+        /* --- Styles pour le Slider Amélioré --- */
+        .image-section {
+            width: 55%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            background-color: #0c182a;
+        }
+        
+        /* Animation "Ken Burns" (zoom lent) */
+        @keyframes kenburns {
+            0% { transform: scale(1.0) translate(0, 0); }
+            100% { transform: scale(1.1) translate(-2%, 1%); }
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+        
+        .slide-background {
+            width: 100%;
+            height: 100%;
             background-size: cover;
-            background-position: center top;
+            background-position: center;
         }
-        .auth-section::before { content: ''; position: absolute; left: -150px; top: 0; width: 250px; height: 100%; background: linear-gradient(155deg, var(--gradient-start), var(--gradient-end)); transform: skewX(-15deg); z-index: 1; }
-
-        /* Styles pour le formulaire... */
-        .form-container { width: 70%; max-width: 400px; padding: 30px; background: var(--form-bg-light); backdrop-filter: blur(10px); border-radius: 10px; border: 1px solid var(--form-border-light); z-index: 5; color: white; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); }
-        body.dark-theme .form-container { background: var(--form-bg-dark); border-color: var(--form-border-dark); }
-        .form-container h2 { margin-top: 0; text-align: center; font-weight: 700; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-size: 0.9rem; font-weight: 600; }
-        .form-group input { width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.2); border: 1px solid var(--form-border-light); border-radius: 5px; color: white; font-family: 'Montserrat', sans-serif; box-sizing: border-box; }
-        body.dark-theme .form-group input { border-color: var(--form-border-dark); }
-        .form-group input::placeholder { color: rgba(255, 255, 255, 0.7); }
-        .submit-btn { width: 100%; padding: 12px; background: linear-gradient(to right, var(--gradient-start), var(--gradient-end)); border: none; color: white; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; border-radius: 5px; transition: transform 0.2s ease, box-shadow 0.2s ease; }
-        .submit-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0, 198, 255, 0.3); }
-        .form-switch, .forgot-password { text-align: center; margin-top: 15px; font-size: 0.9rem; }
-        .form-switch a, .forgot-password a { color: var(--accent-color); text-decoration: none; font-weight: 700; cursor: pointer; }
-        #register-form { display: none; }
-        .forgot-password { margin-top: 10px; }
-
-        /* Styles pour les modales et notifications (inchangés)... */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 1000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); animation: fadeInModal 0.3s ease-out; }
-        .modal-content { background: var(--bg-color-light); color: #333; padding: 0; border-radius: 8px; width: 90%; max-width: 450px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); text-align: center; animation: slideInModal 0.3s ease-out; }
-        body.dark-theme .modal-content { background: #2c2c3e; color: var(--text-color-dark); }
-        .modal-header { padding: 15px 20px; border-bottom: 1px solid #eee; font-size: 1.2rem; font-weight: 700; border-top-left-radius: 8px; border-top-right-radius: 8px;}
-        body.dark-theme .modal-header { border-bottom-color: #444; }
-        .modal-header.success { background-color: var(--success-color); color: white; }
-        .modal-header.error { background-color: var(--error-color); color: white; }
-        .modal-header.info { background: #3498db; color: white; }
-        .modal-body { padding: 25px 20px; font-size: 1rem; line-height: 1.5; }
-        .modal-body p { margin: 0 0 15px 0; }
-        .modal-body .form-group input { color: #333; background: rgba(0, 0, 0, 0.05); border: 1px solid #ccc; }
-        body.dark-theme .modal-body .form-group input { color: white; background: rgba(255, 255, 255, 0.1); border-color: #555; }
-        .modal-footer { padding: 15px; border-top: 1px solid #eee; }
-        body.dark-theme .modal-footer { border-top-color: #444; }
-        .modal-close { background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: background-color 0.2s; }
-        .modal-close:hover { background: #c0392b; }
-        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; }
-        .toast { padding: 15px 20px; border-radius: 5px; color: white; font-weight: 600; box-shadow: 0 3px 10px rgba(0,0,0,0.2); animation: slideInToast 0.3s ease-out forwards; }
-        .toast.info { background-color: #3498db; }
-        .toast.success { background-color: var(--success-color); }
-        .toast.error { background-color: var(--error-color); }
-        @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideInModal { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideInToast { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-
-        /* --- STYLES RESPONSIVE --- */
-        @media (max-width: 1024px) {
-            .banner { flex-direction: column; min-height: unset; }
-            .info-section, .auth-section { width: 100%; min-height: 50vh; }
-            .auth-section { min-height: 60vh; }
-            .info-section { padding: 40px; }
-            .auth-section::before { display: none; }
-            .form-container { width: 80%; }
-            .subtitle { font-size: 2.8rem; }
+        
+        .slide.active {
+            opacity: 1;
         }
 
-        @media (max-width: 768px) {
-            .menu-toggle { display: block; }
-            .navigation-wrapper {
+        .slide.active .slide-background {
+             animation: kenburns 8s ease-out forwards;
+        }
+        
+        /* Dégradé subtil pour la lisibilité du texte */
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, transparent 50%);
+            z-index: 1;
+        }
+
+        /* VOS IMAGES POUR LE SLIDER */
+        .slide:nth-child(1) .slide-background { background-image: url('img1.png'); }
+        .slide:nth-child(2) .slide-background { background-image: url('img2.png'); }
+        .slide:nth-child(3) .slide-background { background-image: url('img3.png');}
+        /* Animation pour la légende */
+        @keyframes slideUpFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-caption {
+            position: absolute;
+            bottom: 50px;
+            left: 50px;
+            color: #fff;
+            background-color: rgba(15, 25, 45, 0.5); /* Fallback */
+            backdrop-filter: blur(8px); /* Effet verre dépoli */
+            -webkit-backdrop-filter: blur(8px);
+            padding: 20px 30px;
+            border-radius: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: calc(100% - 100px);
+            z-index: 2;
+            opacity: 0; /* Caché par défaut */
+        }
+
+        .slide.active .slide-caption {
+            animation: slideUpFadeIn 1s 0.5s ease-out forwards; /* 0.5s de délai */
+        }
+
+        .slide-caption h2 { font-size: 24px; margin-bottom: 10px; text-shadow: 1px 1px 3px rgba(0,0,0,0.4); }
+        .slide-caption p { font-size: 16px; line-height: 1.5; text-shadow: 1px 1px 3px rgba(0,0,0,0.4); }
+        
+        /* --- Section de Connexion --- */
+        .login-section {
+            width: 45%;
+            height: 100%;
+            background-color: #0d1a2e;
+            padding: 40px 60px;
+            padding-top: 120px; /* Espace pour l'en-tête global */
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .login-form-container {
+            max-width: 400px;
+            width: 100%;
+            margin: auto 0;
+        }
+
+        .login-form-container h2 { font-size: 28px; font-weight: 600; margin-bottom: 30px; }
+
+        .input-group { position: relative; margin-bottom: 20px; }
+        .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #8892b0; }
+        .input-group input {
+            width: 100%; padding: 15px 15px 15px 45px; background-color: transparent;
+            border: 1px solid #3a4b65; border-radius: 8px; color: #ffffff; font-size: 16px;
+        }
+        .input-group input::placeholder { color: #8892b0; }
+        .input-group input:focus { outline: none; border-color: #f7d08a; }
+
+        .options { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; font-size: 14px; }
+        .options label { display: flex; align-items: center; color: #8892b0; cursor: pointer; }
+        .options input[type="checkbox"] { margin-right: 10px; }
+        .options a { color: #8892b0; text-decoration: none; }
+        .options a:hover { text-decoration: underline; }
+
+        .login-btn {
+            width: 100%; padding: 15px; border: none; border-radius: 8px;
+            background: linear-gradient(to right, #f7d08a, #e6b86a);
+            color: #0d1a2e; font-size: 16px; font-weight: 600; cursor: pointer;
+            margin-bottom: 20px; transition: opacity 0.3s ease;
+        }
+        .login-btn:hover { opacity: 0.9; }
+
+        .signup-link { font-size: 14px; color: #8892b0; text-align: center; }
+        .signup-link a { color: #ffffff; text-decoration: underline; }
+
+        /* --- Styles pour les écrans plus petits (Responsive) --- */
+        @media (max-width: 900px) {
+            body { overflow-y: auto; }
+            #page-header { padding: 20px; }
+            .main-container { flex-direction: column; height: auto; }
+            
+            .image-section { width: 100%; height: 50vh; min-height: 300px; }
+            .login-section { width: 100%; height: auto; padding: 40px 20px; padding-top: 40px; }
+            
+            nav { /* Masque les liens de navigation par défaut sur mobile */
+                flex-direction: column;
                 position: absolute;
-                top: 80px;
-                left: 0;
-                width: 100%;
-                background-color: var(--banner-bg-light);
-                flex-direction: column;
-                padding: 20px 0;
-                gap: 20px;
-                box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-                transform: translateY(-120%);
-                transition: transform 0.3s ease-in-out;
-                z-index: 1000;
+                top: 80px; /* Juste en dessous de l'en-tête */
+                right: 20px;
+                background-color: #1a2a44;
+                border-radius: 8px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+                padding: 15px 0;
+                width: 200px;
+                display: none; /* Cache le menu par défaut */
+                align-items: flex-start; /* Aligne les éléments à gauche dans le menu déroulant */
             }
-            body.dark-theme .navigation-wrapper {
-                background-color: var(--banner-bg-dark);
-            }
-            .navigation-wrapper.is-open {
-                transform: translateY(0);
-            }
-            nav ul {
-                flex-direction: column;
-                align-items: center;
-                gap: 20px;
-            }
-            .subtitle { font-size: 2.2rem; }
-            .title { font-size: 1.5rem; }
-            .description { max-width: 100%; }
-            .form-container { width: 90%; padding: 25px; }
-        }
 
+            nav.show-menu { /* Affiche le menu quand la classe est active */
+                display: flex;
+            }
+            
+            nav a { /* Styles pour les liens de navigation dans le menu mobile */
+                display: block;
+                margin: 10px 20px;
+                width: calc(100% - 40px);
+            }
+
+            .language-selector { /* Styles pour le sélecteur de langue dans le menu mobile */
+                width: calc(100% - 40px);
+                margin: 10px 20px;
+            }
+
+            .language-button {
+                width: 100%; /* S'étend sur toute la largeur du dropdown */
+                text-align: left;
+            }
+
+            .language-dropdown {
+                right: auto; /* Réinitialise le positionnement à droite */
+                left: 0; /* Aligne le dropdown avec le bouton */
+                width: 100%;
+            }
+
+            .menu-icon { display: block; }
+
+            .slide-caption { left: 20px; bottom: 20px; max-width: calc(100% - 40px); text-align: center; }
+            .slide-caption h2 { text-align: center; } /* Centrage du titre de caption sur mobile */
+            .login-form-container h2 { text-align: center; } /* Centrage du titre de connexion sur mobile */
+        }
+        
         @media (max-width: 480px) {
-            body { font-size: 14px; }
-            .info-section { padding: 25px; }
-            .subtitle { font-size: 1.8rem; }
-            .title { font-size: 1.2rem; }
-            .logo-icon { width: 50px; }
-            .logo { font-size: 1rem; }
-            .contact-details { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .logo img { height: 24px; }
+            .logo { font-size: 20px; }
+            .login-form-container h2 { font-size: 24px; }
+            .slide-caption h2 { font-size: 20px; }
+            .slide-caption p { font-size: 14px; }
         }
     </style>
 </head>
-<body class="dark-theme"> <!-- Thème sombre par défaut -->
-
-    <div class="banner">
-        <!-- SECTION GAUCHE -->
-        <div class="info-section">
-            <header class="main-header">
-                <div class="logo">
-                    <img src="logo.png" alt="iCartable Logo" class="logo-icon"/>
-                </div>
-                <div class="navigation-wrapper">
-                    <nav>
-                        <ul>
-                            <li><a href="#" data-translate="menu_home">Accueil</a></li>
-                            <li><a href="#" data-translate="menu_about">À propos</a></li>
-                            <li><a href="#" data-translate="menu_contact">Contact</a></li>
-                        </ul>
-                    </nav>
-                     <div class="controls">
-                        <select id="language-select" title="Changer de langue">
-                            <option value="fr">Français</option>
-                            <option value="en">English</option>
-                            <option value="es">Español</option>
-                            <option value="de">Deutsch</option>
-                        </select>
-                        <i id="theme-toggle" class="fa-solid fa-sun" title="Changer de thème"></i>
-                    </div>
-                </div>
-                <button class="menu-toggle" aria-label="Ouvrir le menu" data-translate-aria="toggle_menu_label">
-                    <i class="fas fa-bars"></i>
+<body>
+    <!-- En-tête qui est maintenant global à toute la page -->
+    <header id="page-header">
+        <div class="logo" style="background-color: #fff;padding: 5px;border-radius: 5px;">
+             <!-- REMPLACEZ "VOTRE_LOGO_ICI.png" PAR LE LIEN DE VOTRE LOGO -->
+            <img src="logo.png" alt="Galaero Logo">
+            
+        </div>
+        <nav id="main-nav"> <!-- Ajout d'un ID pour faciliter la sélection en JS -->
+            <a href="#" data-translate="about">About</a>
+            <a href="#" data-translate="news">News</a>
+            <a href="#" data-translate="contactUs">Contact Us</a>
+            <div class="language-selector">
+                <button class="language-button" id="language-button">
+                    <i class="fas fa-globe"></i> <span id="current-language-display">FR</span>
                 </button>
-            </header>
+                <ul class="language-dropdown" id="language-dropdown">
+                    <li data-lang="fr">Français</li>
+                    <li data-lang="en">English</li>
+                    <li data-lang="es">Español</li>
+                    <li data-lang="de">Deutsch</li>
+                </ul>
+            </div>
+        </nav>
+        <div class="menu-icon" id="menu-toggle"> <!-- Ajout d'un ID pour le bouton burger -->
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+    </header>
 
-            <div class="main-content">
-                <h2 class="title" data-translate="main_title">LA TECHNOLOGIE</h2>
-                <h1 class="subtitle" data-translate="main_subtitle">Au service de l'éducation</h1>
-                <p class="description" data-translate="main_description">Une plateforme tout-en-un pour les enseignants : accédez à vos documents scolaires partout, collaborez avec d’autres professeurs et suivez la performance de vos élèves en temps réel.</p>
-                <div class="contact-details">
-                    <div class="contact-item"><div class="icon"></div><span>+00 123 453 673</span></div>
-                    <div class="contact-item"><div class="icon"></div><span>@DEV4EDU</span></div>
+    <div class="main-container">
+
+        <!-- Section Slider d'images -->
+        <div class="image-section">
+            <div class="slide active">
+                <div class="slide-background"></div>
+                <div class="slide-caption">
+                    <h1 data-translate="iclaseTitle">iClasse</h1>
+                    <p data-translate="iclaseDesc">Gestion automatise de vos salle de classe, evaluation et suivie des performances de vos eleves,
+                        Exportez vos resultats.
+                    </p>
                 </div>
-                <p style="margin-top: 25px; font-weight: bold;" data-translate="main_priority">Professeurs, élèves — vous faciliter la vie, c’est notre priorité.</p>
+            </div>
+            <div class="slide">
+                <div class="slide-background"></div>
+                 <div class="slide-caption">
+                    <h2 data-translate="ieditorTitle">iEditor</h2>
+                    <p data-translate="ieditorDesc">Creer des document scolaire, editer vos note de cours, ou contribuer a l'elaboration 
+                        d'un livre de cours grace a notre system d'edition collaboratif pour professeur
+                    </p>
+                </div>
+            </div>
+             <div class="slide">
+                <div class="slide-background"></div>
+                <div class="slide-caption">
+                    <h2 data-translate="idocsTitle">iDocs</h2>
+                    <p data-translate="idocsDesc">Acceder a une banque de document, dans different domaine pour facilite vos tache 
+                        d'enseignement, ecrivez et partager vos propre documents dans un reseau de professeurs 
+                        partout au monde.
+                    </p>
+                </div>
             </div>
         </div>
 
-        <!-- SECTION DROITE -->
-        <div class="auth-section">
-            <div class="form-container">
-                <form id="login-form">
-                    <h2 data-translate="login_title">Connexion</h2>
-                    <div class="form-group">
-                        <label for="login-id" data-translate="form_userid">Code identifiant</label>
-                        <input type="text" id="login-id" required>
+        <!-- Section Formulaire de connexion -->
+        <div class="login-section">
+            <div class="login-form-container">
+                <h2 data-translate="loginTitle">Se connecter</h2>
+                <form>
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" placeholder="Username" required data-translate-placeholder="usernamePlaceholder">
                     </div>
-                    <div class="form-group">
-                        <label for="login-password" data-translate="form_password">Mot de passe</label>
-                        <input type="password" id="login-password" required>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" placeholder="Password" required data-translate-placeholder="passwordPlaceholder">
                     </div>
-                    <button type="submit" class="submit-btn" data-translate="login_button">Se connecter</button>
-                    <p class="forgot-password"><a href="#" id="forgot-password-link" data-translate="forgot_password_link">Mot de passe oublié ?</a></p>
-                    <p class="form-switch"><span data-translate="login_switch_text">Pas de compte ?</span> <a id="show-register" data-translate="login_switch_link">Inscrivez-vous</a></p>
+                    <div class="options">
+                        <label>
+                            <input type="checkbox">
+                            <span data-translate="rememberMe">Remember me</span>
+                        </label>
+                        <a href="#" data-translate="forgotPassword">Forgot password?</a>
+                    </div>
+                    <button type="submit" class="login-btn" data-translate="loginButton">LOG IN</button>
                 </form>
-
-                <form id="register-form">
-                    <h2 data-translate="register_title">Inscription</h2>
-                    <div class="form-group"><label for="register-name" data-translate="form_name">Nom complet</label><input type="text" id="register-name" required></div>
-                    <div class="form-group"><label for="register-email" data-translate="form_email">Email</label><input type="email" id="register-email" required></div>
-                    <div class="form-group"><label for="register-password" data-translate="form_password">Mot de passe</label><input type="password" id="register-password" required></div>
-                    <button type="submit" class="submit-btn" data-translate="register_button">Créer un compte</button>
-                     <p class="form-switch"><span data-translate="register_switch_text">Déjà un compte ?</span> <a id="show-login" data-translate="register_switch_link">Connectez-vous</a></p>
-                </form>
+                <p class="signup-link">
+                    <span data-translate="noAccount">Don't have an account?</span> <a href="#" data-translate="signUpHere">Sign up here</a>
+                </p>
             </div>
         </div>
+
     </div>
-
-    <!-- Modales (inchangées) -->
-    <div id="popup-modal" class="modal-overlay">
-        <div class="modal-content">
-            <div id="popup-header" class="modal-header"></div>
-            <div id="popup-body" class="modal-body"></div>
-            <div class="modal-footer">
-                <button id="popup-close" class="modal-close" data-translate="popup_close">Fermer</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="password-reset-modal" class="modal-overlay">
-        <div class="modal-content">
-            <div id="password-reset-header" class="modal-header info" data-translate="reset_password_title">Réinitialiser le mot de passe</div>
-            <div class="modal-body">
-                <form id="request-code-step">
-                    <p data-translate="reset_step1_text">Veuillez saisir votre adresse e-mail pour recevoir un code de vérification.</p>
-                    <div class="form-group">
-                        <label for="reset-email" data-translate="form_email">Email</label>
-                        <input type="email" id="reset-email" required>
-                    </div>
-                    <button type="submit" class="submit-btn" data-translate="reset_step1_button">Envoyer le code</button>
-                </form>
-                <form id="verify-code-step" style="display:none;">
-                    <p data-translate="reset_step2_text">Un code a été envoyé à votre adresse e-mail. Veuillez le saisir ci-dessous.</p>
-                    <div class="form-group">
-                        <label for="verification-code" data-translate="reset_step2_label">Code de vérification</label>
-                        <input type="text" id="verification-code" required>
-                    </div>
-                    <button type="submit" class="submit-btn" data-translate="reset_step2_button">Vérifier</button>
-                </form>
-                <form id="set-new-password-step" style="display:none;">
-                    <p data-translate="reset_step3_text">Le code est correct. Veuillez définir votre nouveau mot de passe.</p>
-                    <div class="form-group">
-                        <label for="new-password" data-translate="form_new_password">Nouveau mot de passe</label>
-                        <input type="password" id="new-password" required>
-                    </div>
-                     <div class="form-group">
-                        <label for="confirm-password" data-translate="form_confirm_password">Confirmer le mot de passe</label>
-                        <input type="password" id="confirm-password" required>
-                    </div>
-                    <button type="submit" class="submit-btn" data-translate="reset_step3_button">Enregistrer</button>
-                </form>
-            </div>
-             <div class="modal-footer">
-                <button id="password-reset-close" class="modal-close" data-translate="popup_close">Fermer</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="toast-container"></div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- GESTION DU MENU RESPONSIVE ---
-            const menuToggle = document.querySelector('.menu-toggle');
-            const navWrapper = document.querySelector('.navigation-wrapper');
-            const menuIcon = menuToggle.querySelector('i');
+        document.addEventListener('DOMContentLoaded', function() {
+            // Slider functionality
+            const slides = document.querySelectorAll('.slide');
+            let currentSlide = 0;
+            const slideInterval = 6000;
 
-            menuToggle.addEventListener('click', () => {
-                navWrapper.classList.toggle('is-open');
-                // Change l'icône de barres à "X" et vice-versa
-                if (navWrapper.classList.contains('is-open')) {
-                    menuIcon.classList.remove('fa-bars');
-                    menuIcon.classList.add('fa-times');
-                } else {
-                    menuIcon.classList.remove('fa-times');
-                    menuIcon.classList.add('fa-bars');
-                }
-            });
+            function nextSlide() {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            }
 
-            // --- GESTION DES FORMULAIRES ---
-            const loginForm = document.getElementById('login-form');
-            const registerForm = document.getElementById('register-form');
-            const showRegisterBtn = document.getElementById('show-register');
-            const showLoginBtn = document.getElementById('show-login');
+            setInterval(nextSlide, slideInterval);
 
-            showRegisterBtn.addEventListener('click', (e) => { e.preventDefault(); loginForm.style.display = 'none'; registerForm.style.display = 'block'; });
-            showLoginBtn.addEventListener('click', (e) => { e.preventDefault(); registerForm.style.display = 'none'; loginForm.style.display = 'block'; });
+            // Translation functionality
+            const languageButton = document.getElementById('language-button');
+            const languageDropdown = document.getElementById('language-dropdown');
+            const currentLanguageDisplay = document.getElementById('current-language-display');
 
-            // --- GESTION DU THÈME ---
-            const themeToggle = document.getElementById('theme-toggle');
-            themeToggle.addEventListener('click', () => {
-                document.body.classList.toggle('dark-theme');
-                const isDark = document.body.classList.contains('dark-theme');
-                themeToggle.classList.toggle('fa-sun', !isDark);
-                themeToggle.classList.toggle('fa-moon', isDark);
-            });
-
-            // --- GESTION DE LA TRADUCTION ---
             const translations = {
-                fr: { menu_home: "Accueil", menu_about: "À propos", menu_contact: "Contact", main_title: "LA TECHNOLOGIE", main_subtitle: "Au service de l'éducation", main_description: "Une plateforme tout-en-un pour les enseignants : accédez à vos documents scolaires partout, collaborez avec d’autres professeurs et suivez la performance de vos élèves en temps réel.", main_priority: "Professeurs, élèves — vous faciliter la vie, c’est notre priorité.", login_title: "Connexion", form_userid: "Code identifiant", form_email: "Email", form_password: "Mot de passe", login_button: "Se connecter", login_switch_text: "Pas de compte ?", login_switch_link: "Inscrivez-vous", register_title: "Inscription", form_name: "Nom complet", register_button: "Créer un compte", register_switch_text: "Déjà un compte ?", register_switch_link: "Connectez-vous", popup_close: "Fermer", toast_loading: "Traitement en cours...", login_success_title: "Succès", login_success_msg: "Connexion réussie ! Bienvenue.", register_success_msg: "Inscription réussie ! Vous pouvez maintenant vous connecter.", api_error_title: "Erreur", api_error_msg: "Une erreur est survenue. Veuillez réessayer.", forgot_password_link: "Mot de passe oublié ?", reset_password_title: "Réinitialiser le mot de passe", reset_step1_text: "Veuillez saisir votre adresse e-mail pour recevoir un code de vérification.", reset_step1_button: "Envoyer le code", reset_step2_text: "Un code a été envoyé à votre adresse e-mail. Veuillez le saisir ci-dessous.", reset_step2_label: "Code de vérification", reset_step2_button: "Vérifier", reset_step3_text: "Le code est correct. Veuillez définir votre nouveau mot de passe.", form_new_password: "Nouveau mot de passe", form_confirm_password: "Confirmer le mot de passe", reset_step3_button: "Enregistrer", password_mismatch: "Les mots de passe ne correspondent pas.", password_updated: "Votre mot de passe a été mis à jour avec succès.", code_sent: "Code de vérification envoyé !", invalid_code: "Code de vérification invalide.", toggle_menu_label: "Ouvrir le menu" },
-                en: { menu_home: "Home", menu_about: "About", menu_contact: "Contact", main_title: "TECHNOLOGY", main_subtitle: "At the service of education", main_description: "An all-in-one platform for teachers: access your school documents everywhere, collaborate with other teachers, and track your students' performance in real-time.", main_priority: "Teachers, students — making your life easier is our priority.", login_title: "Login", form_userid: "User ID", form_email: "Email", form_password: "Password", login_button: "Log in", login_switch_text: "No account?", login_switch_link: "Sign up", register_title: "Sign Up", form_name: "Full Name", register_button: "Create Account", register_switch_text: "Already have an account?", register_switch_link: "Log in", popup_close: "Close", toast_loading: "Processing...", login_success_title: "Success", login_success_msg: "Login successful! Welcome.", register_success_msg: "Registration successful! You can now log in.", api_error_title: "Error", api_error_msg: "An error occurred. Please try again.", forgot_password_link: "Forgot password?", reset_password_title: "Reset Password", reset_step1_text: "Please enter your email address to receive a verification code.", reset_step1_button: "Send Code", reset_step2_text: "A code has been sent to your email address. Please enter it below.", reset_step2_label: "Verification Code", reset_step2_button: "Verify", reset_step3_text: "The code is correct. Please set your new password.", form_new_password: "New Password", form_confirm_password: "Confirm Password", reset_step3_button: "Save", password_mismatch: "Passwords do not match.", password_updated: "Your password has been updated successfully.", code_sent: "Verification code sent!", invalid_code: "Invalid verification code.", toggle_menu_label: "Open menu" },
-                es: { menu_home: "Inicio", menu_about: "Sobre nosotros", menu_contact: "Contacto", main_title: "TECNOLOGÍA", main_subtitle: "Al servicio de la educación", main_description: "Una plataforma todo en uno para profesores: acceda a sus documentos escolares en todas partes, colabore con otros profesores y siga el rendimiento de sus alumnos en tiempo real.", main_priority: "Profesores, alumnos: facilitarles la vida es nuestra prioridad.", login_title: "Iniciar sesión", form_userid: "Código de identificación", form_email: "Correo electrónico", form_password: "Contraseña", login_button: "Iniciar sesión", login_switch_text: "¿No tiene cuenta?", login_switch_link: "Regístrese", register_title: "Inscripción", form_name: "Nombre completo", register_button: "Crear cuenta", register_switch_text: "¿Ya tiene una cuenta?", register_switch_link: "Inicie sesión", popup_close: "Cerrar", toast_loading: "Procesando...", login_success_title: "Éxito", login_success_msg: "¡Inicio de sesión exitoso! Bienvenido.", register_success_msg: "¡Registro exitoso! Ahora puede iniciar sesión.", api_error_title: "Error", api_error_msg: "Ocurrió un error. Por favor, inténtelo de nuevo.", forgot_password_link: "¿Olvidó su contraseña?", reset_password_title: "Restablecer contraseña", reset_step1_text: "Por favor, ingrese su dirección de correo electrónico para recibir un código de verificación.", reset_step1_button: "Enviar código", reset_step2_text: "Se ha enviado un código a su dirección de correo electrónico. Por favor, ingréselo a continuación.", reset_step2_label: "Código de verificación", reset_step2_button: "Verificar", reset_step3_text: "El código es correcto. Por favor, establezca su nueva contraseña.", form_new_password: "Nueva contraseña", form_confirm_password: "Confirmar contraseña", reset_step3_button: "Guardar", password_mismatch: "Las contraseñas no coinciden.", password_updated: "Su contraseña ha sido actualizada exitosamente.", code_sent: "¡Código de verificación enviado!", invalid_code: "Código de verificación inválido.", toggle_menu_label: "Abrir menú" },
-                de: { menu_home: "Startseite", menu_about: "Über uns", menu_contact: "Kontakt", main_title: "TECHNOLOGIE", main_subtitle: "Im Dienste der Bildung", main_description: "Eine All-in-One-Plattform für Lehrer: Greifen Sie überall auf Ihre Schulunterlagen zu, arbeiten Sie mit anderen Lehrern zusammen und verfolgen Sie die Leistung Ihrer Schüler in Echtzeit.", main_priority: "Lehrer, Schüler – Ihr Leben einfacher zu machen, ist unsere Priorität.", login_title: "Anmeldung", form_userid: "Benutzerkennung", form_email: "E-Mail", form_password: "Passwort", login_button: "Anmelden", login_switch_text: "Kein Konto?", login_switch_link: "Registrieren", register_title: "Registrierung", form_name: "Vollständiger Name", register_button: "Konto erstellen", register_switch_text: "Haben Sie bereits ein Konto?", register_switch_link: "Anmelden", popup_close: "Schließen", toast_loading: "Verarbeitung...", login_success_title: "Erfolg", login_success_msg: "Anmeldung erfolgreich! Willkommen.", register_success_msg: "Registrierung erfolgreich! Sie können sich jetzt anmelden.", api_error_title: "Fehler", api_error_msg: "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.", forgot_password_link: "Passwort vergessen?", reset_password_title: "Passwort zurücksetzen", reset_step1_text: "Bitte geben Sie Ihre E-Mail-Adresse ein, um einen Bestätigungscode zu erhalten.", reset_step1_button: "Code senden", reset_step2_text: "Ein Code wurde an Ihre E-Mail-Adresse gesendet. Bitte geben Sie ihn unten ein.", reset_step2_label: "Bestätigungscode", reset_step2_button: "Überprüfen", reset_step3_text: "Der Code ist korrekt. Bitte legen Sie Ihr neues Passwort fest.", form_new_password: "Neues Passwort", form_confirm_password: "Passwort bestätigen", reset_step3_button: "Speichern", password_mismatch: "Die Passwörter stimmen nicht überein.", password_updated: "Ihr Passwort wurde erfolgreich aktualisiert.", code_sent: "Bestätigungscode gesendet!", invalid_code: "Ungültiger Bestätigungscode.", toggle_menu_label: "Menü öffnen" }
+                fr: {
+                    about: "À propos",
+                    news: "Actualités",
+                    contactUs: "Nous contacter",
+                    iclaseTitle: "iClasse",
+                    iclaseDesc: "Gestion automatisée de vos salles de classe, évaluation et suivi des performances de vos élèves, exportez vos résultats.",
+                    ieditorTitle: "iEditor",
+                    ieditorDesc: "Créez des documents scolaires, éditez vos notes de cours, ou contribuez à l'élaboration d'un livre de cours grâce à notre système d'édition collaboratif pour professeurs.",
+                    idocsTitle: "iDocs",
+                    idocsDesc: "Accédez à une banque de documents, dans différents domaines pour faciliter vos tâches d'enseignement, écrivez et partagez vos propres documents dans un réseau de professeurs partout au monde.",
+                    loginTitle: "Se connecter",
+                    usernamePlaceholder: "Nom d'utilisateur",
+                    passwordPlaceholder: "Mot de passe",
+                    rememberMe: "Se souvenir de moi",
+                    forgotPassword: "Mot de passe oublié ?",
+                    loginButton: "CONNEXION",
+                    noAccount: "Pas encore de compte ?",
+                    signUpHere: "S'inscrire ici"
+                },
+                en: {
+                    about: "About",
+                    news: "News",
+                    contactUs: "Contact Us",
+                    iclaseTitle: "iClass",
+                    iclaseDesc: "Automated management of your classrooms, evaluation and performance tracking of your students, export your results.",
+                    ieditorTitle: "iEditor",
+                    ieditorDesc: "Create school documents, edit your course notes, or contribute to the development of a course book thanks to our collaborative editing system for teachers.",
+                    idocsTitle: "iDocs",
+                    idocsDesc: "Access a document bank, in different fields to facilitate your teaching tasks, write and share your own documents within a network of teachers worldwide.",
+                    loginTitle: "Log In",
+                    usernamePlaceholder: "Username",
+                    passwordPlaceholder: "Password",
+                    rememberMe: "Remember me",
+                    forgotPassword: "Forgot password?",
+                    loginButton: "LOG IN",
+                    noAccount: "Don't have an account?",
+                    signUpHere: "Sign up here"
+                },
+                es: {
+                    about: "Acerca de",
+                    news: "Noticias",
+                    contactUs: "Contáctenos",
+                    iclaseTitle: "iClase",
+                    iclaseDesc: "Gestión automatizada de sus aulas, evaluación y seguimiento del rendimiento de sus alumnos, exporte sus resultados.",
+                    ieditorTitle: "iEditor",
+                    ieditorDesc: "Cree documentos escolares, edite sus apuntes de clase o contribuya a la elaboración de un libro de texto gracias a nuestro sistema de edición colaborativa para profesores.",
+                    idocsTitle: "iDocs",
+                    idocsDesc: "Acceda a un banco de documentos, en diferentes áreas para facilitar sus tareas de enseñanza, escriba y comparta sus propios documentos en una red de profesores de todo el mundo.",
+                    loginTitle: "Iniciar sesión",
+                    usernamePlaceholder: "Nombre de usuario",
+                    passwordPlaceholder: "Contraseña",
+                    rememberMe: "Recordarme",
+                    forgotPassword: "¿Olvidó su contraseña?",
+                    loginButton: "INICIAR SESIÓN",
+                    noAccount: "¿No tienes una cuenta?",
+                    signUpHere: "Regístrate aquí"
+                },
+                de: {
+                    about: "Über uns",
+                    news: "Neuigkeiten",
+                    contactUs: "Kontakt",
+                    iclaseTitle: "iKlasse",
+                    iclaseDesc: "Automatisierte Verwaltung Ihrer Klassenzimmer, Bewertung und Leistungsverfolgung Ihrer Schüler, exportieren Sie Ihre Ergebnisse.",
+                    ieditorTitle: "iEditor",
+                    ieditorDesc: "Erstellen Sie Schuldokumente, bearbeiten Sie Ihre Kursnotizen oder tragen Sie zur Entwicklung eines Kursbuches dank unseres kollaborativen Redaktionssystems für Lehrer bei.",
+                    idocsTitle: "iDocs",
+                    idocsDesc: "Greifen Sie auf eine Dokumentenbank in verschiedenen Bereichen zu, um Ihre Lehraufgaben zu erleichtern, schreiben und teilen Sie Ihre eigenen Dokumente in einem weltweiten Netzwerk von Lehrern.",
+                    loginTitle: "Anmelden",
+                    usernamePlaceholder: "Benutzername",
+                    passwordPlaceholder: "Passwort",
+                    rememberMe: "Angemeldet bleiben",
+                    forgotPassword: "Passwort vergessen?",
+                    loginButton: "ANMELDEN",
+                    noAccount: "Noch kein Konto?",
+                    signUpHere: "Hier registrieren"
+                }
             };
 
-            const languageSelect = document.getElementById('language-select');
-            function changeLanguage(lang) {
+            function setLanguage(lang) {
+                // Change lang attribute of html tag
                 document.documentElement.lang = lang;
-                document.querySelectorAll('[data-translate]').forEach(el => {
-                    const key = el.getAttribute('data-translate');
-                    if (translations[lang]?.[key]) {
-                        el.textContent = translations[lang][key];
-                    } else if (translations['fr'][key]) { // Fallback en français
-                        el.textContent = translations['fr'][key];
+                currentLanguageDisplay.textContent = lang.toUpperCase();
+
+                // Translate elements with data-translate attribute
+                document.querySelectorAll('[data-translate]').forEach(element => {
+                    const key = element.getAttribute('data-translate');
+                    if (translations[lang] && translations[lang][key]) {
+                        element.textContent = translations[lang][key];
                     }
                 });
-                document.querySelectorAll('[data-translate-aria]').forEach(el => {
-                    const key = el.getAttribute('data-translate-aria');
-                    if (translations[lang]?.[key]) {
-                        el.setAttribute('aria-label', translations[lang][key]);
-                    } else if (translations['fr'][key]) {
-                        el.setAttribute('aria-label', translations['fr'][key]);
+
+                // Translate placeholder attributes
+                document.querySelectorAll('[data-translate-placeholder]').forEach(element => {
+                    const key = element.getAttribute('data-translate-placeholder');
+                    if (translations[lang] && translations[lang][key]) {
+                        element.placeholder = translations[lang][key];
                     }
                 });
             }
-            languageSelect.addEventListener('change', (e) => changeLanguage(e.target.value));
 
-            // Le reste du code JavaScript (modales, toasts, API) reste identique...
-            const modal = document.getElementById('popup-modal');
-            const modalHeader = document.getElementById('popup-header');
-            const modalBody = document.getElementById('popup-body');
-            const closeModalBtn = document.getElementById('popup-close');
-            function showPopup(title, message, type = 'success') { modalHeader.textContent = title; modalBody.textContent = message; modalHeader.className = 'modal-header ' + type; modal.style.display = 'flex'; }
-            function hidePopup() { modal.style.display = 'none'; }
-            closeModalBtn.addEventListener('click', hidePopup);
-            modal.addEventListener('click', (e) => { if (e.target === modal) hidePopup(); });
-            const toastContainer = document.getElementById('toast-container');
-            function showToast(message, type = 'info', duration = 3000) { const toast = document.createElement('div'); toast.className = `toast ${type}`; toast.textContent = message; toastContainer.appendChild(toast); setTimeout(() => toast.remove(), duration); }
-            const forgotPasswordLink = document.getElementById('forgot-password-link');
-            const passwordResetModal = document.getElementById('password-reset-modal');
-            const passwordResetCloseBtn = document.getElementById('password-reset-close');
-            const requestCodeStep = document.getElementById('request-code-step');
-            const verifyCodeStep = document.getElementById('verify-code-step');
-            const setNewPasswordStep = document.getElementById('set-new-password-step');
-            forgotPasswordLink.addEventListener('click', (e) => { e.preventDefault(); requestCodeStep.style.display = 'block'; verifyCodeStep.style.display = 'none'; setNewPasswordStep.style.display = 'none'; passwordResetModal.style.display = 'flex'; });
-            function hidePasswordResetModal() { passwordResetModal.style.display = 'none'; }
-            passwordResetCloseBtn.addEventListener('click', hidePasswordResetModal);
-            passwordResetModal.addEventListener('click', (e) => { if (e.target === passwordResetModal) hidePasswordResetModal(); });
-            requestCodeStep.addEventListener('submit', (e) => { e.preventDefault(); showToast(translations[document.documentElement.lang].code_sent, 'success'); requestCodeStep.style.display = 'none'; verifyCodeStep.style.display = 'block'; });
-            verifyCodeStep.addEventListener('submit', (e) => { e.preventDefault(); const code = document.getElementById('verification-code').value; if (code) { verifyCodeStep.style.display = 'none'; setNewPasswordStep.style.display = 'block'; } else { showToast(translations[document.documentElement.lang].invalid_code, 'error'); } });
-            setNewPasswordStep.addEventListener('submit', (e) => { e.preventDefault(); const newPassword = document.getElementById('new-password').value; const confirmPassword = document.getElementById('confirm-password').value; if (newPassword !== confirmPassword) { showToast(translations[document.documentElement.lang].password_mismatch, 'error'); return; } hidePasswordResetModal(); showPopup(translations[document.documentElement.lang].login_success_title, translations[document.documentElement.lang].password_updated, 'success'); });
-            function sendApiRequest(endpoint, data) { return new Promise((resolve, reject) => { setTimeout(() => { const lang = document.documentElement.lang; if (Math.random() < 0.8) { resolve({ message: endpoint === '/login' ? translations[lang].login_success_msg : translations[lang].register_success_msg }); } else { reject({ message: translations[lang].api_error_msg }); } }, 1500); }); }
-            loginForm.addEventListener('submit', async (e) => { e.preventDefault(); const lang = document.documentElement.lang; showToast(translations[lang].toast_loading, 'info'); try { const response = await sendApiRequest('/login', {}); showPopup(translations[lang].login_success_title, response.message, 'success'); loginForm.reset(); } catch (error) { showPopup(translations[lang].api_error_title, error.message, 'error'); } });
-            registerForm.addEventListener('submit', async (e) => { e.preventDefault(); const lang = document.documentElement.lang; showToast(translations[lang].toast_loading, 'info'); try { const response = await sendApiRequest('/register', {}); showPopup(translations[lang].login_success_title, response.message, 'success'); registerForm.reset(); showLoginBtn.click(); } catch (error) { showPopup(translations[lang].api_error_title, error.message, 'error'); } });
+            // Toggle dropdown visibility for language selector
+            languageButton.addEventListener('click', function(event) {
+                languageDropdown.classList.toggle('show');
+                event.stopPropagation(); // Empêche la fermeture immédiate due au clic sur le body
+            });
 
-            // Initialiser la page
-            changeLanguage('fr');
-            const isDark = document.body.classList.contains('dark-theme');
-            themeToggle.classList.toggle('fa-sun', !isDark);
-            themeToggle.classList.toggle('fa-moon', isDark);
+            // Close language dropdown if clicked outside
+            document.addEventListener('click', function(event) {
+                if (!languageDropdown.contains(event.target) && !languageButton.contains(event.target)) {
+                    languageDropdown.classList.remove('show');
+                }
+            });
+
+            // Handle language selection from dropdown
+            languageDropdown.querySelectorAll('li').forEach(item => {
+                item.addEventListener('click', function() {
+                    const selectedLang = this.getAttribute('data-lang');
+                    setLanguage(selectedLang);
+                    languageDropdown.classList.remove('show'); // Hide dropdown after selection
+                });
+            });
+
+            // Set initial language (e.g., from browser or default to 'fr')
+            const userLang = navigator.language.split('-')[0] || 'fr';
+            setLanguage(userLang in translations ? userLang : 'fr');
+
+
+            // Mobile Menu Toggle functionality
+            const menuToggle = document.getElementById('menu-toggle');
+            const mainNav = document.getElementById('main-nav');
+
+            menuToggle.addEventListener('click', function() {
+                mainNav.classList.toggle('show-menu');
+            });
+
+            // Close mobile menu if clicked outside (except for language dropdown)
+            document.addEventListener('click', function(event) {
+                // If the menu is open and the click is not inside the nav or the menu toggle button
+                if (mainNav.classList.contains('show-menu') && 
+                    !mainNav.contains(event.target) && 
+                    !menuToggle.contains(event.target)) {
+                    mainNav.classList.remove('show-menu');
+                }
+            });
         });
     </script>
 

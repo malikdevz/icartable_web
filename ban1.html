@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Headphone Accessories</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+        body {
+            margin: 0;
+            font-family: 'Montserrat', Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden; /* Empêche le défilement horizontal */
+        }
+
+        /* Animated Galaxy Background */
+        .galaxy-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #0a0a0f 0%, #000000 100%);
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite alternate,
+                       move var(--move-duration) linear infinite;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0.5); }
+        }
+
+        @keyframes move {
+            0% { transform: translate(var(--x-start), var(--y-start)); }
+            100% { transform: translate(var(--x-end), var(--y-end)); }
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            position: relative; /* Pour que le contenu soit au-dessus du fond */
+            z-index: 1;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background-color: rgba(0, 0, 0, 0.7); /* Légèrement transparent */
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .navbar .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .navbar .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .navbar .nav-links a:hover {
+            color: #FFD700; /* Or clair */
+        }
+
+        .navbar .login-button {
+            background-color: #A0522D; /* Sienna */
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar .login-button:hover {
+            background-color: #CD853F; /* Peru */
+        }
+
+        /* Hamburger Menu */
+        .hamburger {
+            display: none; /* Caché par défaut */
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .hamburger .bar {
+            width: 25px;
+            height: 3px;
+            background-color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            display: flex;
+            flex-grow: 1;
+            align-items: center;
+            padding: 50px 0; /* Ajout de padding vertical */
+            min-height: calc(100vh - 80px); /* Hauteur ajustée moins la navbar */
+        }
+
+        .hero-content {
+            flex: 1;
+            padding: 0 50px; /* Padding latéral */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .hero-content h1 {
+            font-size: 4.5em;
+            margin-bottom: 20px;
+            line-height: 1.1;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .hero-content p {
+            font-size: 1.15em;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            max-width: 500px; /* Limite la largeur du texte */
+            color: #ccc;
+        }
+
+        .hero-content .read-more-button {
+            background-color: #A0522D; /* Sienna */
+            color: #fff;
+            padding: 15px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            align-self: flex-start;
+            transition: background-color 0.3s ease;
+        }
+
+        .hero-content .read-more-button:hover {
+            background-color: #CD853F; /* Peru */
+        }
+
+        .hero-image-container {
+            flex: 1;
+            background-color: rgba(160, 82, 45, 0.7); /* Sienna transparent */
+            display: flex;
+            flex-direction: column; /* Pour empiler les contrôles sous l'image */
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            min-height: 400px; /* Hauteur minimale pour l'image */
+            padding: 30px 0;
+        }
+
+        .hero-image-wrapper {
+            position: relative;
+            width: 100%; /* S'adapte au conteneur */
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; /* Cache les parties des images hors de vue */
+        }
+
+        .hero-image-wrapper img {
+            max-width: 80%; /* Pour que l'image ne soit pas trop grande */
+            max-height: 80%;
+            object-fit: contain; /* Assure que l'image est entièrement visible */
+            position: absolute; /* Pour superposer les écouteurs */
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+
+        .hero-image-wrapper img.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .hero-image-wrapper img.next {
+            transform: translateX(100%); /* Commence à droite */
+        }
+        .hero-image-wrapper img.prev {
+            transform: translateX(-100%); /* Commence à gauche */
+        }
+
+
+        .slider-controls {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .slider-controls button {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: #fff;
+            padding: 12px 18px; /* Taille des boutons */
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5em; /* Taille des flèches */
+            transition: background-color 0.3s ease;
+        }
+
+        .slider-controls button:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Product Grid */
+        .product-grid {
+            display: flex;
+            justify-content: center; /* Centrer les cartes */
+            padding: 50px;
+            background-color: rgba(0, 0, 0, 0.7); /* Fond transparent pour la galaxie */
+            gap: 30px; /* Plus d'espace entre les cartes */
+            flex-wrap: wrap; /* Permet aux cartes de passer à la ligne */
+        }
+
+        .product-card {
+            background-color: rgba(160, 82, 45, 0.8); /* Sienna transparent */
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            flex: 1;
+            min-width: 250px; /* Minimum plus grand */
+            max-width: 300px; /* Maximum pour éviter qu'elles ne soient trop larges */
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.5);
+        }
+
+        .product-card h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1.5em;
+            color: #fff;
+        }
+
+        .product-card p {
+            font-size: 1em;
+            line-height: 1.5;
+            color: #eee;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .navbar {
+                padding: 20px 30px;
+            }
+            .hero-content h1 {
+                font-size: 3.5em;
+            }
+            .hero-content p {
+                font-size: 1.05em;
+            }
+            .product-grid {
+                padding: 40px 30px;
+            }
+            .product-card {
+                min-width: 220px;
+                max-width: 45%; /* Deux cartes par ligne */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar .nav-links {
+                display: none; /* Masque les liens par défaut */
+                flex-direction: column;
+                position: absolute;
+                top: 80px; /* Sous la navbar */
+                left: 0;
+                width: 100%;
+                background-color: rgba(0, 0, 0, 0.9);
+                padding: 20px 0;
+                box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+                text-align: center;
+            }
+
+            .navbar .nav-links.active {
+                display: flex; /* Affiche les liens quand le menu est actif */
+            }
+
+            .navbar .nav-links a {
+                margin: 10px 0;
+                font-size: 1.2em;
+            }
+
+            .navbar .login-button {
+                display: none; /* Masque le bouton Login aussi */
+            }
+
+            .hamburger {
+                display: flex; /* Affiche le bouton hamburger */
+            }
+
+            .hero-section {
+                flex-direction: column;
+                padding: 30px 0;
+                min-height: auto; /* Supprime la hauteur minimale fixe */
+            }
+            .hero-content, .hero-image-container {
+                padding: 30px 20px;
+                text-align: center;
+            }
+            .hero-content h1 {
+                font-size: 2.8em;
+            }
+            .hero-content p {
+                font-size: 1em;
+                max-width: none; /* Pas de limite de largeur sur mobile */
+            }
+            .hero-content .read-more-button {
+                align-self: center;
+            }
+            .hero-image-container {
+                min-height: 350px;
+            }
+            .slider-controls {
+                position: static; /* Positionnement normal sur mobile */
+                margin-top: 20px;
+            }
+            .product-grid {
+                flex-direction: column; /* Une carte par ligne */
+                padding: 30px 20px;
+            }
+            .product-card {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar {
+                padding: 15px 20px;
+            }
+            .navbar .logo {
+                font-size: 24px;
+            }
+            .hamburger {
+                gap: 4px;
+            }
+            .hamburger .bar {
+                width: 20px;
+                height: 2px;
+            }
+            .hero-content h1 {
+                font-size: 2.2em;
+            }
+            .hero-content p {
+                font-size: 0.9em;
+            }
+            .hero-content .read-more-button {
+                padding: 12px 25px;
+            }
+            .hero-image-container {
+                min-height: 250px;
+            }
+            .slider-controls button {
+                padding: 10px 15px;
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Galaxy Background -->
+    <div class="galaxy-background" id="galaxy-bg"></div>
+
+    <div class="container">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="logo">MUSIC</div>
+            <div class="nav-links" id="navLinks">
+                <a href="#">Home</a>
+                <a href="#">Product</a>
+                <a href="#">About</a>
+                <!-- Le bouton login peut être ici ou en dehors, selon le design final sur mobile -->
+                <a href="#" class="login-button">Login</a>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1>HEADPHONE ACSESSORIS</h1>
+                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,</p>
+                <a href="#" class="read-more-button">READ MORE</a>
+            </div>
+            <div class="hero-image-container">
+                <div class="hero-image-wrapper">
+                    <!-- Les images des écouteurs pour le slider -->
+                    <img src="https://i.imgur.com/G5iE1jE.png" alt="Headphone 1" class="headphone-slide active">
+                    <img src="https://i.imgur.com/3f08m8D.png" alt="Headphone 2" class="headphone-slide">
+                    <img src="https://i.imgur.com/z4D6K9C.png" alt="Headphone 3" class="headphone-slide">
+                    <!-- Ajoutez d'autres images ici avec la classe "headphone-slide" -->
+                </div>
+
+                <div class="slider-controls">
+                    <button id="prev-slide">&larr;</button>
+                    <button id="next-slide">&rarr;</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Product Grid -->
+        <section class="product-grid">
+            <div class="product-card">
+                <h3>PRODUCT 1</h3>
+                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the printing and typesetting industry.</p>
+            </div>
+            <div class="product-card">
+                <h3>PRODUCT 1</h3>
+                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the printing and typesetting industry.</p>
+            </div>
+            <div class="product-card">
+                <h3>PRODUCT 1</h3>
+                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the printing and typesetting industry.</p>
+            </div>
+            <div class="product-card">
+                <h3>PRODUCT 1</h3>
+                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the printing and typesetting industry.</p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // JavaScript pour le menu hamburger
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // JavaScript pour le slider
+        const slides = document.querySelectorAll('.headphone-slide');
+        const prevButton = document.getElementById('prev-slide');
+        const nextButton = document.getElementById('next-slide');
+        let currentSlide = 0;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active', 'prev', 'next');
+                if (i === index) {
+                    slide.classList.add('active');
+                }
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        nextButton.addEventListener('click', nextSlide);
+        prevButton.addEventListener('click', prevSlide);
+
+        // Initialiser le slider
+        showSlide(currentSlide);
+
+        // JavaScript pour la galaxie animée (génération des étoiles)
+        const galaxyBg = document.getElementById('galaxy-bg');
+        const numStars = 100; // Nombre d'étoiles
+
+        for (let i = 0; i < numStars; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            const size = Math.random() * 3 + 1; // Taille entre 1px et 4px
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.top = `${Math.random() * 100}%`;
+            star.style.setProperty('--duration', `${Math.random() * 2 + 1}s`); // Durée de l'étincelle
+            star.style.setProperty('--move-duration', `${Math.random() * 20 + 10}s`); // Durée du mouvement
+            star.style.setProperty('--x-start', `${(Math.random() * 200 - 100)}px`); // Déplacement horizontal
+            star.style.setProperty('--y-start', `${(Math.random() * 200 - 100)}px`); // Déplacement vertical
+            star.style.setProperty('--x-end', `${(Math.random() * 200 - 100)}px`);
+            star.style.setProperty('--y-end', `${(Math.random() * 200 - 100)}px`);
+            galaxyBg.appendChild(star);
+        }
+    </script>
+</body>
+</html>
